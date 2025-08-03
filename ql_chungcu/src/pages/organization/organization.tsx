@@ -6,21 +6,27 @@ import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@radix-ui/react-dropdown-menu";
 import {RotateCw} from "lucide-react";
 
-import {DataTable} from "@/layouts/data-table.tsx";
-import {columns} from "@/layouts/columns/column-tb-org.tsx";
+import {DataTableSecond} from "@/layouts/tables/data-table-second.tsx";
 import type {fillItemOrg, orgWithoutChild} from "@/types/Organization.ts";
 import OrgForm, {type OrgFormSchema} from "./action-form-org.tsx";
 import {createOrgAPI, deleteOrgAPI, getAllOrgAPI, getAllOrgWithoutChildAPI, updateOrgAPI} from "@/apis/orgAPI.ts";
 import {toast} from "sonner";
 import {handleAxiosStatusCode} from "@/utils/request.ts";
+import {ColumnsOrg} from "@/layouts/columns/column-tb-org.tsx";
+import {columnLabelsOrg} from "@/utils/column-label.ts";
+import AddMemberOrg from "@/pages/organization/add-member-org.tsx";
+import type {bdItemCheckbox} from "@/types/Building.ts";
+import {getAllBdAPI} from "@/apis/bdAPI.ts";
 
 function Organization() {
     const [openDialog, setOpenDialog] = useState(false);
+    const [openDialogMember, setOpenDialogMemeber] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [org, setOrg] = useState([]);
     const [orgUpdate, setOrgUpdate] = useState({});
     const [listOrgWithoutChild, setListOrgWithoutChild] = useState([]);
+    const [listBuilding, setListBuilding] = useState([]);
     const [action, setAction] = useState("CREATE");
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
@@ -32,6 +38,7 @@ function Organization() {
         getAllOrgAPI().then(data => {
             setOrg(data);
         })
+        getAllBuilding()
     }, [])
 
     //Lay tat ca cac phong ban tru phong ban hien tai va con cua no de fill vao form action
@@ -51,10 +58,27 @@ function Organization() {
         }
     }
 
+    const getAllBuilding = async () => {
+        try {
+            const data = await getAllBdAPI()
+
+            const items = data.map(function (item: bdItemCheckbox) {
+                return ({
+                    id: item.id,
+                    building_name: item.building_name,
+                });
+            });
+            setListBuilding(items);
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    }
+
     // xu ly khi nhan nut them moi
     const handleCreate = () => {
         setOrgUpdate({})
         getAllOrgWithoutChild('00000000-0000-0000-0000-000000000000')
+        getAllBuilding()
         setAction("CREATE")
         setOpenDialog(true)
     }
@@ -63,6 +87,7 @@ function Organization() {
     const handleUpdate = (orgUpdate: fillItemOrg): void => { // nhan tham so la thong tin hang can update
         setOrgUpdate(orgUpdate)
         getAllOrgWithoutChild(orgUpdate.id)
+        getAllBuilding()
         setAction("UPDATE")
         setOpenDialog(true)
     }
@@ -76,6 +101,11 @@ function Organization() {
         const orgs = await getAllOrgAPI();
         setOrg(orgs);
         setRowSelection({})
+    }
+
+    const handleAddMember = (listOrg: string[]): void => {
+        console.log(listOrg);
+        setOpenDialogMemeber(true);
     }
 
     //submit form
@@ -107,7 +137,8 @@ function Organization() {
                          loading={loading}
                          action={action}
                          formData={orgUpdate}
-                         items={listOrgWithoutChild}
+                         itemsOrg={listOrgWithoutChild}
+                         itemsBd={listBuilding}
                          onSubmit={submitCreateOrUpdate}>
                 </OrgForm>
             </div>
@@ -120,11 +151,21 @@ function Organization() {
             </div>
 
             <div className="p-4 mt-4 border border-gray-300 rounded-xl">
-                <DataTable columns={columns({handleUpdate, handleDelete})} data={org} handleDelete={handleDelete}
-                           keyword={debouncedKeyword}
-                           rowSelection={rowSelection}
-                           setRowSelection={setRowSelection}
+                <DataTableSecond columns={ColumnsOrg({itemsBd: listBuilding, handleUpdate, handleDelete, handleAddMember})} data={org}
+                                 handleDelete={handleDelete}
+                                 keyword={debouncedKeyword}
+                                 rowSelection={rowSelection}
+                                 setRowSelection={setRowSelection}
+                                 columnLabels={columnLabelsOrg}
                 />
+                <AddMemberOrg
+                    open={openDialogMember}
+                    setOpen={setOpenDialogMemeber}
+                    loading={loading}
+                    action={action}
+                >
+
+                </AddMemberOrg>
             </div>
         </>
     )

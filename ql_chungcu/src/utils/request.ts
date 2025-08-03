@@ -16,7 +16,10 @@ request.interceptors.response.use(
         }
         return response;
     },
-    (error) => Promise.reject(error)
+    (error) => {
+        handleAxiosStatusCode(error);
+        return Promise.reject(error)
+    }
 );
 
 
@@ -31,28 +34,28 @@ export function handleAxiosStatusCode(error: unknown) {
                 break;
 
             case 401:
-                console.warn("Unauthorized:", data.message);
+                toast.warning("Unauthorized:", data.message);
                 // Chuyển sang trang đăng nhập hoặc thông báo
                 // navigate('/login');
                 break;
 
             case 403:
-                console.warn("Forbidden:", data.message);
+                toast.warning("Forbidden:", data.message);
                 // Hiển thị lỗi không có quyền
                 break;
 
             case 404:
-                console.warn("Not Found:", data.message);
+                toast.warning("Not Found:", data.message);
                 // Hiển thị trang 404
                 break;
 
             case 500:
-                console.error("Server Error:", data.message);
+                toast.error("Server Error:", data.message);
                 // Báo lỗi hệ thống
                 break;
 
             default:
-                toast.message('Lỗi không xác định:', {
+                toast.message('Lỗi:', {
                     description: data?.message || error.message,
                 })
         }

@@ -11,17 +11,12 @@ import {DropdownMenuTrigger} from "@radix-ui/react-dropdown-menu"
 import {Settings2} from "lucide-react"
 import type {Table} from "@tanstack/react-table";
 
-// anh xa id sang ten cu the
-const columnLabels: Record<string, string> = {
-    org_code: "Mã đơn vị",
-    org_name: "Tên đơn vị",
-    description: "Mô tả",
-}
 
 export function DataTableViewOptions<TData>({
-                                                table,
+                                                table, columnLabels
                                             }: {
     table: Table<TData>
+    columnLabels: Record<string, string>
 }) {
     return (
         <DropdownMenu>

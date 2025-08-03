@@ -6,6 +6,7 @@ export type Org = {
     parent_org_id: string;
     status?: string;
     child?: Org[];
+    building: string[];
 }
 
 export type fillItemOrg = {
@@ -14,6 +15,7 @@ export type fillItemOrg = {
     org_name: string;
     description: string;
     parent_org_id: string;
+    building: string[];
 }
 
 export type orgWithoutChild = {

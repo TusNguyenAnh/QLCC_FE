@@ -34,7 +34,10 @@ export default function Header() {
     ;
     const ITEMS_TO_DISPLAY = 3;
     const pathToLabelMap: { [key: string]: string } = {
-        org: 'Quản lý cơ cấu tổ chức'
+        org: 'Quản lý cơ cấu tổ chức',
+        bd: 'Quản lý tòa nhà',
+        apres: 'Cư dân căn hộ',
+        apt: 'Quản lý căn hộ'
     };
 
     // Hàm tạo mảng breadcrumb từ URL

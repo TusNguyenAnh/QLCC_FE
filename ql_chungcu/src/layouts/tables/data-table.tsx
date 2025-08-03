@@ -1,6 +1,6 @@
 'use client';
 
-import {Fragment, useMemo, useState} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 
 import {
     Table,
@@ -9,7 +9,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/components/ui/table.tsx';
 
 import clsx from 'clsx';
 import {useIsMobile} from "@/hooks/use-mobile.ts";
@@ -22,14 +22,12 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     flexRender,
-    getExpandedRowModel,
+    getExpandedRowModel, getFilteredRowModel,
 } from '@tanstack/react-table';
 import {DataTablePagination} from "@/layouts/data-table-pagination.tsx";
 
-import type {Org} from "@/types/Organization.ts";
 import {DataTableViewOptions} from "@/layouts/data-table-view.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {getSelectedRows} from "@/utils/recursive-tree.ts";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -38,95 +36,62 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 
 
-interface DataTableProps<TData extends Org & { child?: TData[] }, TValue> {
+interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
+    columnLabels: Record<string, string>;
     data: TData[];
     keyword: string
     showColumns?: boolean;
-    handleDelete: (listOrg: string[]) => void
     rowSelection: any,
     setRowSelection: any
+    handleDelete: (listItem: string[]) => void
 }
 
-
-function filterRowsRecursively<T extends Org>(
-    rows: T[],
-    globalFilter: string
-): T[] {
-    const lowerFilter = globalFilter.toLowerCase();
-
-    return rows
-        .map((row) => {
-            const filteredSubRows = row.child
-                ? filterRowsRecursively(row.child, globalFilter)
-                : [];
-
-            const matchCurrent =
-                (row.org_code && typeof row.org_code === 'string' ? row.org_code.toLowerCase().includes(lowerFilter) : false) ||
-                (row.description && typeof row.description === 'string' ? row.description.toLowerCase().includes(lowerFilter) : false) ||
-                (row.org_name && typeof row.org_name === 'string' ? row.org_name.toLowerCase().includes(lowerFilter) : false);
-
-            // Nếu chính row khớp → giữ lại (và chỉ giữ child khớp, không giữ toàn bộ)
-            // Nếu row không khớp nhưng child có khớp → vẫn giữ row để có thể expand
-            if (matchCurrent || filteredSubRows.length > 0) {
-                return {
-                    ...row,
-                    child: filteredSubRows,
-                };
-            }
-
-            return null;
-        })
-        .filter(Boolean) as T[];
-}
-
-
-export function DataTable<TData extends Org & { child?: TData[] | undefined; }, TValue>
+export function DataTable<TData, TValue>
 (
     {
         columns,
+        columnLabels,
         data,
         keyword,
-        handleDelete,
         rowSelection,
-        setRowSelection
+        setRowSelection,
+        handleDelete,
     }: DataTableProps<TData, TValue>
 ) {
-    const [sorting, setSorting] = useState<SortingState>([]);
     const isMobile = useIsMobile();
-
-    // chỉ lọc lại khi data hoặc chuỗi filter đổi
-    const filteredData = useMemo(() => {
-        return keyword
-            ? filterRowsRecursively(data, keyword)
-            : data;
-    }, [data, keyword]);
-
+    const [sorting, setSorting] = useState<SortingState>([]);
 
     const table = useReactTable<TData>({
-        data: filteredData,
+        data: data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getSubRows: (row: TData) => {
-            return row.child || []
-        },
         onSortingChange: setSorting,
         onRowSelectionChange: setRowSelection,
-        getRowId: (row) => row.id, // nhớ khai báo nếu id không phải là 'id'
-        enableRowSelection: true,
-        state: {sorting, rowSelection},
+        getFilteredRowModel: getFilteredRowModel(),
+        globalFilterFn: 'includesString',
+        enableRowSelection: true, // Chỉ cho phép chọn hàng có status là "0"
+        getRowId: row => row.id,
         initialState: {
             pagination: {
                 pageIndex: 0,     // Trang bắt đầu (0 là trang đầu)
                 pageSize: 10,     // Số dòng mỗi trang
             },
         },
+        state: {
+            sorting,
+            rowSelection
+        }
     });
 
-    const {ids, selected, total} = getSelectedRows(table.getCoreRowModel().rows);
+    useEffect(() => {
+        table.setGlobalFilter(keyword);
+    }, [keyword])
+
+    const ids = table.getSelectedRowModel().rows.map((r) => r.original.id)
 
     return (
         <div>
@@ -134,14 +99,15 @@ export function DataTable<TData extends Org & { child?: TData[] | undefined; }, 
                 <div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" disabled={selected < 2}>Thực hiện hàng loạt</Button>
+                            <Button variant="outline" disabled={ids.length < 2}>Thực hiện hàng loạt</Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="start">
                             <DropdownMenuItem onClick={() => handleDelete(ids)}>Ngưng hoạt động</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <DataTableViewOptions table={table}></DataTableViewOptions>
+
+                <DataTableViewOptions table={table} columnLabels={columnLabels}></DataTableViewOptions>
             </div>
 
             <div className="relative overflow-auto max-h-[500px]">

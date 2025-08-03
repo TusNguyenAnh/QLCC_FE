@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/sheet.tsx";
 
 import type {fillItemOrg} from "@/types/Organization.ts";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
+import type {bdItemCheckbox} from "@/types/Building.ts";
 
 // Định nghĩa schema Zod
 const schema = z.object({
@@ -26,6 +28,7 @@ const schema = z.object({
     org_name: z.string().min(1, "Tên đơn vị không được để trống"),
     description: z.string().optional(),
     parent_org_id: z.string().optional(),
+    building: z.array(z.string()).optional(),
 })
 
 export type OrgFormSchema = z.infer<typeof schema>
@@ -33,14 +36,24 @@ export type OrgFormSchema = z.infer<typeof schema>
 type ComponentProps = {
     action: string
     formData: fillItemOrg // bạn có thể định nghĩa rõ ràng kiểu dữ liệu nếu muốn
-    items: any[]
+    itemsOrg: any[]
+    itemsBd: any[]
     onSubmit: (data: OrgFormSchema, orgId: string) => void
     open?: boolean;
     setOpen?: (open: boolean) => void;
     loading?: boolean;
 }
 
-export default function OrgForm({open, setOpen, loading, action, formData, items, onSubmit}: ComponentProps) {
+export default function OrgForm({
+                                    open,
+                                    setOpen,
+                                    loading,
+                                    action,
+                                    formData,
+                                    itemsOrg,
+                                    itemsBd,
+                                    onSubmit
+                                }: ComponentProps) {
     const {
         register,
         handleSubmit,
@@ -54,6 +67,8 @@ export default function OrgForm({open, setOpen, loading, action, formData, items
             org_name: formData?.org_name || "",
             description: formData?.description || "",
             parent_org_id: formData?.parent_org_id || "",
+            building: [] as string[],
+
         },
     })
 
@@ -64,6 +79,7 @@ export default function OrgForm({open, setOpen, loading, action, formData, items
                 org_name: formData.org_name || "",
                 description: formData.description || "",
                 parent_org_id: formData.parent_org_id || "",
+                building: formData.building || [],
             })
         }
     }, [formData, reset])
@@ -125,12 +141,54 @@ export default function OrgForm({open, setOpen, loading, action, formData, items
                                     name="parent_org_id"
                                     render={({field}) => (
                                         <Combobox
-                                            items={items}
+                                            items={itemsOrg}
                                             onChange={(value) => field.onChange(value)}
                                             itemUpdate={action === "UPDATE" ? formData.parent_org_id : ""}
                                         />
                                     )}
                                 />
+                            </div>
+
+                            <div className="grid gap-4">
+                                <Label>Quản trị tòa</Label>
+                                <div className="h-[210px] overflow-y-auto">
+                                    {itemsBd.map((itemBd: bdItemCheckbox) => (
+                                        <Controller
+                                            key={itemBd.id}
+                                            control={control}
+                                            name="building"
+                                            render={({field}) => {
+                                                const checked = !!field.value?.includes(
+                                                    itemBd.id
+                                                )
+
+                                                return (
+                                                    <div className="flex items-center space-x-2">
+                                                        <Checkbox
+                                                            id={itemBd.id}
+                                                            checked={checked}
+                                                            onCheckedChange={(isChecked) => {
+                                                                // clone mảng hiện tại
+                                                                const current = field.value || []
+                                                                let updated: string[]
+
+                                                                if (isChecked) {
+                                                                    updated = [...current, itemBd.id]
+                                                                } else {
+                                                                    updated = current.filter((v) => v !== itemBd.id)
+                                                                }
+
+                                                                field.onChange(updated)
+                                                            }}
+                                                        />
+                                                        <Label htmlFor={itemBd.id}
+                                                               className="flex-1 cursor-pointer py-2">{itemBd.building_name}</Label>
+                                                    </div>
+                                                )
+                                            }}
+                                        />
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -139,7 +197,8 @@ export default function OrgForm({open, setOpen, loading, action, formData, items
                         <Button type="submit">Lưu thay đổi</Button>
                         <SheetClose asChild>
                             <Button type="button" variant="outline" onClick={() => {
-                            }}>Hủy</Button>
+                            }}>Hủy
+                            </Button>
                         </SheetClose>
                     </SheetFooter>
                 </form>

@@ -18,13 +18,13 @@ import type {fillItemOrg, Org} from "@/types/Organization";
 interface ComponentProps {
     handleUpdate: (org: fillItemOrg) => void
     handleDelete: (listOrg: string[]) => void
-
+    handleAddMember: (listOrg: string[]) => void
+    itemsBd: any[]
 }
 
 //Cột là nơi bạn xác định cốt lõi của bảng trông như thế nào. Chúng xác định dữ liệu sẽ được hiển thị, cách định dạng, sắp xếp và lọc dữ liệu.
-export const columns = ({handleUpdate, handleDelete}: ComponentProps): ColumnDef<Org>[] => [
+export const ColumnsOrg = ({handleUpdate, handleDelete,handleAddMember,itemsBd}: ComponentProps): ColumnDef<Org>[] => [
     {
-
         id: "select_all",
         header: ({table}) => {
             // const rows = table.getRowModel().rows;
@@ -120,6 +120,21 @@ export const columns = ({handleUpdate, handleDelete}: ComponentProps): ColumnDef
         ),
     },
 
+
+    {
+        accessorKey: 'building',
+        header: ({column}) => (
+            <DataTableColumnHeader column={column} title="Quản trị tòa"/>
+        ),
+        cell: ({row}) => (
+            <div>{(row.getValue('building') as string[])
+                    .map(bdId => itemsBd.find(b => b.id === bdId)?.building_name)
+                    .filter(Boolean)
+                    .join(', ')
+            }</div>
+        ),
+    },
+
     {
         id: 'actions',
         enableHiding: false,
@@ -135,16 +150,22 @@ export const columns = ({handleUpdate, handleDelete}: ComponentProps): ColumnDef
 
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Chức năng</DropdownMenuLabel>
+                        <DropdownMenuSeparator/>
+                        <DropdownMenuItem
+                            onClick={() => handleAddMember([orgItemUpdate.id])} // Thêm thành viên: lay key la cac id cua toa nha
+                        >
+                            Thêm thành viên
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => handleUpdate(orgItemUpdate)}
                         >
                             Sửa
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator/>
                         <DropdownMenuItem
                             onClick={() => handleDelete([orgItemUpdate.id])}
                         >
-                            Ngưng hoạt động</DropdownMenuItem>
+                            Ngưng hoạt động
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

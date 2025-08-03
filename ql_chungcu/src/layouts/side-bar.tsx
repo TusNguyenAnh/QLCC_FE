@@ -6,10 +6,10 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub, SidebarMenuSubButton,
+    SidebarMenuSub,
     SidebarMenuSubItem, SidebarProvider
 } from "@/components/ui/sidebar.tsx";
-import {Building, ChevronRight, Home, Network, Settings, UserRoundCog, Workflow} from "lucide-react";
+import {Building, Building2, ChevronRight, Home, Network, Settings, UserRoundCog, Workflow} from "lucide-react";
 import {Link} from "react-router-dom";
 
 const items = [
@@ -36,6 +36,14 @@ const items = [
     },
 
     {
+        id: 8,
+        title: "Quản lý tòa nhà",
+        url: "/page/bd",
+        icon: Building2,
+        child: []
+    },
+
+    {
         id: 4,
         title: "Cư dân căn hộ",
         url: "#",
@@ -51,7 +59,7 @@ const items = [
             {
                 id: 6,
                 title: "Quản lý căn hộ",
-                url: "#",
+                url: "/page/apres/apt",
                 icon: Home,
                 child: []
             }
@@ -97,12 +105,15 @@ export default function SidebarCus() {
                                                     <SidebarMenuSub>
                                                         {item.child.map((itemChild) => (
                                                             <SidebarMenuSubItem className="mt-1" key={itemChild.id}>
-                                                                <SidebarMenuSubButton className="flex justify-between">
-                                                                    <div className="flex items-center">
-                                                                        <itemChild.icon className="size-4 mr-1.5"/>
-                                                                        <span>{itemChild.title}</span>
-                                                                    </div>
-                                                                </SidebarMenuSubButton>
+                                                                <Link to={itemChild.url}>
+                                                                    <SidebarMenuButton
+                                                                        className="flex justify-between">
+                                                                        <div className="flex items-center">
+                                                                            <itemChild.icon className="size-4 mr-1.5"/>
+                                                                            <span>{itemChild.title}</span>
+                                                                        </div>
+                                                                    </SidebarMenuButton>
+                                                                </Link>
                                                             </SidebarMenuSubItem>
                                                         ))}
                                                     </SidebarMenuSub>
