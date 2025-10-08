@@ -26,7 +26,11 @@ function Organization() {
     const [org, setOrg] = useState([]);
     const [orgUpdate, setOrgUpdate] = useState({});
     const [listOrgWithoutChild, setListOrgWithoutChild] = useState([]);
+
     const [listBuilding, setListBuilding] = useState([]);
+    const [orgIdManage, setOrgIdManage] = useState();
+    const [buildingIdManage, setBuildingIdManage] = useState<string[]>([]);
+
     const [action, setAction] = useState("CREATE");
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
@@ -103,8 +107,9 @@ function Organization() {
         setRowSelection({})
     }
 
-    const handleAddMember = (listOrg: string[]): void => {
-        console.log(listOrg);
+    const handleAddMember = (orgId: string, buildingId:string[]): void => {
+        setOrgIdManage(orgId);
+        setBuildingIdManage(buildingId);
         setOpenDialogMemeber(true);
     }
 
@@ -161,8 +166,9 @@ function Organization() {
                 <AddMemberOrg
                     open={openDialogMember}
                     setOpen={setOpenDialogMemeber}
-                    loading={loading}
                     action={action}
+                    buildingIdManage={buildingIdManage}
+                    orgIdManage={orgIdManage}
                 >
 
                 </AddMemberOrg>

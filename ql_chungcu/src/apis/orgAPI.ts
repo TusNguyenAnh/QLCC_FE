@@ -6,6 +6,12 @@ export const getAllOrgAPI = async () => {
     return res.data;
 }
 
+export const findByIdAPI = async (orgId: string) => {
+    const res = await request.get(`/org/findById/${orgId}`);
+    return res.data;
+}
+
+
 export const getAllOrgWithoutChildAPI = async (orgId: string) => {
     const res = await request.get(`/org/getAllWithoutChild/${orgId}`);
     return res.data;
