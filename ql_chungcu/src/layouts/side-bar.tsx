@@ -7,10 +7,25 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
-    SidebarMenuSubItem, SidebarProvider
+    SidebarMenuSubItem, SidebarProvider, SidebarTrigger
 } from "@/components/ui/sidebar.tsx";
-import {Building, Building2, ChevronRight, Home, Network, Settings, UserRoundCog, Workflow} from "lucide-react";
-import {Link} from "react-router-dom";
+import {
+    Building,
+    Building2,
+    ChevronRight,
+    FileText,
+    Home,
+    LogOut,
+    Network,
+    Settings,
+    UserRoundCog,
+    Workflow
+} from "lucide-react";
+import {Link, useNavigate} from "react-router-dom";
+import {useContext, useState} from "react";
+import {logoutUser} from "@/apis/authAPI.ts";
+import {handleAxiosStatusCode} from "@/utils/request.ts";
+import {AuthContext} from "@/context/AuthContext.tsx";
 
 const items = [
     {
@@ -29,8 +44,8 @@ const items = [
     },
     {
         id: 3,
-        title: "Quản lý nghiệp vụ",
-        url: "/",
+        title: "Quản lý quy trình",
+        url: "/page/bsn",
         icon: Workflow,
         child: []
     },
@@ -52,7 +67,7 @@ const items = [
             {
                 id: 5,
                 title: "Quản lý cư dân",
-                url: "#",
+                url: "/page/apres/res",
                 icon: UserRoundCog,
                 child: []
             },
@@ -66,39 +81,91 @@ const items = [
         ]
     },
     {
+        id: 10,
+        title: "Xử lý yêu cầu",
+        url: "/page/reply",
+        icon: FileText,
+        child: []
+    },
+    {
         id: 7,
         title: "Cài đặt",
         url: "#",
         icon: Settings,
+        child: []
+    },
+    {
+        id: 9,
+        title: "Đăng xuất",
+        url: "#",
+        icon: LogOut,
         child: []
     }
 
 ]
 
 export default function SidebarCus() {
+    const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
+    const {setUser} = useContext(AuthContext);
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            // toast.success("Đăng nhập thành công!");
+            setUser(null);
+            navigate("/login");
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    }
+
     return (
         <SidebarProvider>
-            <Sidebar>
+            <Sidebar collapsible="icon">
                 <SidebarContent>
                     <SidebarGroup>
-                        <SidebarGroupLabel>MBS</SidebarGroupLabel>
+                        <div className="flex items-center justify-between">
+                            <SidebarGroupLabel hidden={open}>MBS
+                            </SidebarGroupLabel>
+                            <SidebarTrigger className="p-4" onClick={() => setOpen(prev => !prev)}>
+                            </SidebarTrigger>
+                        </div>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {items.map((item) => (
                                     <Collapsible className="group/collapsible grp" key={item.id}>
                                         <SidebarMenuItem className="mb-1.5">
                                             <CollapsibleTrigger asChild>
-                                                <Link to={item.url}>
-                                                    <SidebarMenuButton className="flex justify-between">
-                                                        <div className="flex items-center">
-                                                            <item.icon className="size-4 mr-1.5"/>
-                                                            <span>{item.title}</span>
-                                                        </div>
+                                                {item.title === "Đăng xuất" ?
+                                                    (
+                                                        <SidebarMenuButton
+                                                            className="flex justify-between cursor-pointer"
+                                                            onClick={(e) => {
+                                                                e.preventDefault()
+                                                                handleLogout();
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center">
+                                                                <item.icon className="size-4 mr-1.5"/>
+                                                                <span
+                                                                    className={open ? "hidden" : "fadeIn block opacity-1"}>{item.title}</span>
+                                                            </div>
+                                                        </SidebarMenuButton>
+                                                    ) : (
+                                                        <Link to={item.url}>
+                                                            <SidebarMenuButton className="flex justify-between">
+                                                                <div className={"flex items-center"}>
+                                                                    <item.icon className="size-4 mr-1.5"/>
+                                                                    <span
+                                                                        className={open ? "hidden" : "fadeIn block opacity-1"}>{item.title}</span>
+                                                                </div>
 
-                                                        {item.child.length > 0 && (
-                                                            <ChevronRight className="chevron-rotate"/>)}
-                                                    </SidebarMenuButton>
-                                                </Link>
+                                                                {item.child.length > 0 && (
+                                                                    <ChevronRight className="chevron-rotate"/>)}
+                                                            </SidebarMenuButton>
+                                                        </Link>
+                                                    )}
                                             </CollapsibleTrigger>
                                             {item.child.length > 0 && (
                                                 <CollapsibleContent className="CollapsibleContent">
@@ -110,7 +177,8 @@ export default function SidebarCus() {
                                                                         className="flex justify-between">
                                                                         <div className="flex items-center">
                                                                             <itemChild.icon className="size-4 mr-1.5"/>
-                                                                            <span>{itemChild.title}</span>
+                                                                            <span
+                                                                                className={open ? "hidden" : "fadeIn block opacity-1"}>{itemChild.title}</span>
                                                                         </div>
                                                                     </SidebarMenuButton>
                                                                 </Link>

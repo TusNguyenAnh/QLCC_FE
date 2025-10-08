@@ -37,7 +37,10 @@ export default function Header() {
         org: 'Quản lý cơ cấu tổ chức',
         bd: 'Quản lý tòa nhà',
         apres: 'Cư dân căn hộ',
-        apt: 'Quản lý căn hộ'
+        apt: 'Quản lý căn hộ',
+        res: 'Quản lý cư dân',
+        bsn: 'Quản lý quy trình',
+        reply: 'Xử lý yêu cầu',
     };
 
     // Hàm tạo mảng breadcrumb từ URL

@@ -10,3 +10,19 @@ export const columnLabelsBd: Record<string, string> = {
     address: "Địa chỉ",
 }
 
+export const columnLabelsApt: Record<string, string> = {
+    apt_number: "Số căn hộ",
+    apt_area: "Diện tích",
+    apt_type: "Loại căn hộ",
+    description: "Mô tả",
+}
+
+export const columnLabelsRes: Record<string, string> = {
+    res_id:"Mã cư dân",
+    cccd: "Số căn cước",
+    fullname: "Cư dân",
+    email: "Email",
+    phone_number: "Số điện thoại",
+    birthday: "Ngày sinh",
+    gender: "Giới tính",
+}

@@ -120,6 +120,18 @@
     }
 }
 
+.sup {
+    animation: slideUp 300ms ease-out;
+}
+
+.sdown {
+    animation: slideDown 300ms ease-in;
+}
+
+.fadeIn {
+    animation: fadeIn 3s ease-out forwards;
+}
+
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -131,6 +143,7 @@
     }
 }
 
+
 @keyframes slideUp {
     from {
         opacity: 1;
@@ -139,6 +152,15 @@
     to {
         opacity: 0;
         transform: translateY(-10px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
 
@@ -152,9 +174,11 @@
 }
 
 .chevron-rotate {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .grp[data-state="open"] .chevron-rotate {
-  transform: rotate(90deg);
+    transform: rotate(90deg);
 }
+
+
