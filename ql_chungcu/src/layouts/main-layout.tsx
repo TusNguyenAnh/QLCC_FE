@@ -9,6 +9,7 @@ interface MyComponentProps {
 }
 
 export function MainLayout({content}: MyComponentProps) {
+
     return (
         <div className="flex">
             <div>
@@ -20,7 +21,7 @@ export function MainLayout({content}: MyComponentProps) {
                 </div>
                 <div className="px-4 mt-8">
                     {content}
-                    <Toaster position="bottom-left"  richColors/>
+                    <Toaster position="bottom-left" richColors/>
                 </div>
             </div>
         </div>

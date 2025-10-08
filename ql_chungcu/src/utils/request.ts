@@ -7,6 +7,7 @@ const request = axios.create({
     headers: {
         Accept: 'application/json',
     },
+    withCredentials: true, // Đảm bảo gửi cookie với mỗi yêu cầu
 });
 
 request.interceptors.response.use(
@@ -22,6 +23,29 @@ request.interceptors.response.use(
     }
 );
 
+// Refresh token tự động nếu access token hết hạn
+// request.interceptors.response.use(
+//     (response) => response,
+//     async (error) => {
+//         const originalRequest = error.config;
+//
+//         if (error.response?.status === 401 && !originalRequest._retry) {
+//             originalRequest._retry = true;
+//             try {
+//                 const { data } = await api.post<{ accessToken: string }>("/auth/refresh");
+//                 localStorage.setItem("accessToken", data.accessToken);
+//                 originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+//                 return api(originalRequest);
+//             } catch {
+//                 localStorage.removeItem("accessToken");
+//                 window.location.href = "/login";
+//             }
+//         }
+//
+//         return Promise.reject(error);
+//     }
+// );
+
 
 export function handleAxiosStatusCode(error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -34,7 +58,7 @@ export function handleAxiosStatusCode(error: unknown) {
                 break;
 
             case 401:
-                toast.warning("Unauthorized:", data.message);
+                toast.warning("Unauthorized: " + data.message);
                 // Chuyển sang trang đăng nhập hoặc thông báo
                 // navigate('/login');
                 break;
