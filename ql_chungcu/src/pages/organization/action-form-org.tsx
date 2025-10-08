@@ -93,7 +93,7 @@ export default function OrgForm({
                     </div>
                 )}
 
-                <form className="flex flex-col flex-1"
+                <form className="flex flex-col flex-1 relative"
                       onSubmit={handleSubmit((data) => {
                           // Gửi ngược data + id lên cha
                           onSubmit(data, formData?.id)
@@ -109,7 +109,7 @@ export default function OrgForm({
                         </SheetDescription>
                     </SheetHeader>
 
-                    <div className="grid auto-rows-min px-4 h-[75vh] overflow-y-auto">
+                    <div className="grid auto-rows-min px-4 h-[70vh] overflow-y-auto">
                         <div className="grid gap-4">
                             {/* Mã đơn vị */}
                             <div className="grid gap-3">
@@ -193,7 +193,7 @@ export default function OrgForm({
                         </div>
                     </div>
 
-                    <SheetFooter className="mt-4">
+                    <SheetFooter className="mt-4 absolute bottom-1 w-full">
                         <Button type="submit">Lưu thay đổi</Button>
                         <SheetClose asChild>
                             <Button type="button" variant="outline" onClick={() => {

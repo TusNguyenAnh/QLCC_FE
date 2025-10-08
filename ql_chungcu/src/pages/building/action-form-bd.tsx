@@ -70,7 +70,7 @@ export default function BdForm({open, setOpen, loading, action, formData, onSubm
                     </div>
                 )}
 
-                <form className="flex flex-col flex-1"
+                <form className="flex flex-col flex-1 relative"
                       onSubmit={handleSubmit((data) => {
                           // Gửi ngược data + id lên cha
                           onSubmit(data, formData?.id)
@@ -103,7 +103,7 @@ export default function BdForm({open, setOpen, loading, action, formData, onSubm
                         </div>
                     </div>
 
-                    <SheetFooter className="mt-4">
+                    <SheetFooter className="mt-4 absolute bottom-1 w-full">
                         <Button type="submit">Lưu thay đổi</Button>
                         <SheetClose asChild>
                             <Button type="button" variant="outline" onClick={() => {
