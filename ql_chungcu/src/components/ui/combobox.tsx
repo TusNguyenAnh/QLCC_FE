@@ -54,13 +54,13 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent className="w-max p-0"
+            <PopoverContent className="w-max p-0 transform: translate(826px, 402px)"
                             onWheel={(e) => {
                                 e.stopPropagation()
                             }}
             >
                 <Command>
-                    <CommandInput className="min-w-1/2 w-80" placeholder="Search item..."/>
+                    <CommandInput className="min-w-1/2" placeholder="Search item..."/>
                     <CommandList>
                         <CommandEmpty>No item found.</CommandEmpty>
                         <CommandGroup className="max-h-60 overflow-y-auto">

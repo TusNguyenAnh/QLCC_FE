@@ -10,6 +10,12 @@ export const columnLabelsBd: Record<string, string> = {
     address: "Địa chỉ",
 }
 
+export const columnLabelsTt: Record<string, string> = {
+    type_name: "Loại yêu cầu",
+    priority: "Mức độ ưu tiên",
+    description: "Mô tả",
+}
+
 export const columnLabelsApt: Record<string, string> = {
     apt_number: "Số căn hộ",
     apt_area: "Diện tích",
