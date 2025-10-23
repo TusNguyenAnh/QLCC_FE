@@ -47,11 +47,6 @@ export function Building() {
     }
 
     const handleDelete = async (listBd: string[]): void => { // nhan tham so la thong tin hang can update
-        // setOrgUpdate(orgUpdate)
-        // getAllOrgWithoutChild(orgUpdate.id)
-        // setAction("UPDATE")
-        // setOpenDialog(true)
-        // console.log(listBd);
         await deleteBdAPI(listBd)
         const buildings = await getAllBdAPI();
         setBuilding(buildings);

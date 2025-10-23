@@ -19,6 +19,7 @@ import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {getProfile, login} from "@/apis/authAPI.ts";
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "@/context/AuthContext.tsx";
+import {findByIdAPI} from "@/apis/orgAPI.ts";
 
 // Định nghĩa schema Zod
 const schema = z.object({
@@ -43,7 +44,7 @@ export function Login() {
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const {user,setUser} = useContext(AuthContext);
+    const {user,setUser,setComplex,setOrgManage} = useContext(AuthContext);
 
 
     const onSubmit = async (data: any) => {
@@ -51,7 +52,10 @@ export function Login() {
         try {
             await login(data);
             const userInfo = await getProfile();
+            const org = await findByIdAPI(userInfo.resident.org_id);
             setUser(userInfo);
+            setOrgManage(org.id);
+            setComplex(org.complex_id);
             toast.success("Đăng nhập thành công!");
             navigate("/");
         } catch (err) {

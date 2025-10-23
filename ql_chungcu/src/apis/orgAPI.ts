@@ -17,6 +17,12 @@ export const getAllOrgWithoutChildAPI = async (orgId: string) => {
     return res.data;
 }
 
+export const getTopLevelOrg = async (complexId: string) => {
+    const res = await request.get(`/org/getTopLevel/${complexId}`);
+    return res.data;
+}
+
+
 export const createOrgAPI = async (newOrg: OrgFormSchema) => {
     const res = await request.post('/org/create', newOrg);
     return res.data;

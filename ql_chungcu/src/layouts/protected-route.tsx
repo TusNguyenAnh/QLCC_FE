@@ -9,9 +9,7 @@ type ComponentProps = {
 }
 
 export function ProtectedRoute({children, roles}: ComponentProps) {
-    const {user,loading,complex} = useContext(AuthContext);
-
-    console.log(complex);
+    const {user} = useContext(AuthContext);
 
     if (!user) return <Navigate to="/login" replace/>;
 

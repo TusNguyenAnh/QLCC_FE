@@ -22,3 +22,8 @@ export type orgWithoutChild = {
     id: string;
     org_name: string;
 }
+
+export type memberOrg = {
+    id: string;
+    fullname: string;
+}

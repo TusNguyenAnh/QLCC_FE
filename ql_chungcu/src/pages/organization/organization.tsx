@@ -97,10 +97,6 @@ function Organization() {
     }
 
     const handleDelete = async (listOrg: string[]): void => { // nhan tham so la thong tin hang can update
-        // setOrgUpdate(orgUpdate)
-        // getAllOrgWithoutChild(orgUpdate.id)
-        // setAction("UPDATE")
-        // setOpenDialog(true)
         await deleteOrgAPI(listOrg)
         const orgs = await getAllOrgAPI();
         setOrg(orgs);

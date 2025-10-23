@@ -6,7 +6,12 @@ import {findByIdAPI} from "@/apis/orgAPI.ts";
 interface AuthContextType {
     user: any | null;
     complex: any | null;
+    orgManage: any | null;
+
     setUser: React.Dispatch<React.SetStateAction<any | null>>;
+    setComplex: React.Dispatch<React.SetStateAction<any | null>>;
+    setOrgManage: React.Dispatch<React.SetStateAction<any | null>>;
+
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     isLoggedIn?: boolean;
@@ -23,6 +28,7 @@ export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 export default function AuthProvider({children}: ComponentProps) {
     const [user, setUser] = useState<any | null>(null);
     const [complex, setComplex] = useState<any | null>(null);
+    const [orgManage, setOrgManage] = useState<any | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
     const fetchUser = async () => {
@@ -30,6 +36,8 @@ export default function AuthProvider({children}: ComponentProps) {
         try {
             const profile = await getProfile();
             const org = await findByIdAPI(profile.resident.org_id);
+            setOrgManage(org.id)
+            console.log(org);
             setUser(profile);
             setComplex(org.complex_id);
         } catch {
@@ -45,7 +53,8 @@ export default function AuthProvider({children}: ComponentProps) {
 
 
     return (
-        <AuthContext.Provider value={{user, loading, setLoading, setUser,fetchUser,complex}}>
+        <AuthContext.Provider
+            value={{user, loading, setLoading, setUser, fetchUser, complex, setComplex, orgManage, setOrgManage}}>
             {loading
                 ?
                 (<div className="absolute inset-0 z-10 bg-white/50 flex items-center justify-center">

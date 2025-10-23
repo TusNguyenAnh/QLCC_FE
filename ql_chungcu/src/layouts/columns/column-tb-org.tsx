@@ -18,7 +18,7 @@ import type {fillItemOrg, Org} from "@/types/Organization";
 interface ComponentProps {
     handleUpdate: (org: fillItemOrg) => void
     handleDelete: (listOrg: string[]) => void
-    handleAddMember: (orgId: string, buildingId:string[]) => void
+    handleAddMember: (orgId: string, buildingId: string[]) => void
     itemsBd: any[]
 }
 
@@ -32,20 +32,6 @@ export const ColumnsOrg = ({
     {
         id: "select_all",
         header: ({table}) => {
-            // const rows = table.getRowModel().rows;
-            //
-            // const selectableRows = rows.filter(
-            //     (row) => row.original.status == "0"
-            // );
-            //
-            // const selectedRows = selectableRows.filter(
-            //     (row) => row.getIsSelected()
-            // );
-            //
-            // const isAllSelected =
-            //     selectableRows.length > 0 &&
-            //     selectedRows.length === selectableRows.length;
-
             return (
 
                 <Checkbox className="cursor-pointer"

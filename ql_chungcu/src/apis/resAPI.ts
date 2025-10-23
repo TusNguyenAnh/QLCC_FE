@@ -16,6 +16,11 @@ export const findByBuildingId = async (buildingId: string[]) => {
     return res.data;
 }
 
+export const updateResInOrg = async (resId: string[],org_id:string) => {
+    const res = await request.post(`/resident/updateResInOrg/${org_id}`,  { res_id: resId});
+    return res.data;
+}
+
 export const createBdAPI = async (newBd: BdFormSchema) => {
     const res = await request.post('/bd/create', newBd);
     return res.data;
