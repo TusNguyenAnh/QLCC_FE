@@ -7,7 +7,7 @@ import {DataTable} from "@/layouts/tables/data-table.tsx";
 import type {Building, fillItemBd} from "@/types/Building.ts";
 import {ColumnsBd} from "@/layouts/columns/column-tb-bd.tsx";
 import {columnLabelsBd, columnLabelsRes} from "@/utils/column-label.ts";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
 import {createBdAPI, deleteBdAPI, getAllBdAPI, updateBdAPI} from "@/apis/bdAPI.ts";
 import {toast} from "sonner";
@@ -15,6 +15,7 @@ import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {getAllResAPI} from "@/apis/resAPI.ts";
 import type {Resident} from "@/types/Resident.ts";
 import {ColumnsRes} from "@/layouts/columns/column-tb-res.tsx";
+import {AuthContext} from "@/context/AuthContext.tsx";
 
 export function Resident() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -26,6 +27,7 @@ export function Resident() {
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
+    const {complex} = useContext(AuthContext);
 
 
     //Lay tat ca cac phong ban
@@ -56,7 +58,7 @@ export function Resident() {
         // setOpenDialog(true)
         // console.log(listBd);
         await deleteBdAPI(listBd)
-        const buildings = await getAllBdAPI();
+        const buildings = await getAllBdAPI(complex);
         setBuilding(buildings);
         setRowSelection({})
     }
@@ -70,7 +72,7 @@ export function Resident() {
             } else {
                 await updateBdAPI(data, bdId);
             }
-            const buildings = await getAllBdAPI();
+            const buildings = await getAllBdAPI(complex);
             setBuilding(buildings);
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
@@ -80,7 +82,7 @@ export function Resident() {
         }
     }
 
-    return(
+    return (
         <>
             <div className="flex flex-wrap items-center justify-end gap-2 md:flex-row">
                 <Button className="hover: cursor-pointer" onClick={handleCreate}>Thêm mới</Button>
@@ -102,11 +104,12 @@ export function Resident() {
             </div>
 
             <div className="p-4 mt-4 border border-gray-300 rounded-xl">
-                <DataTable<Resident,any> columns={ColumnsRes({handleUpdate, handleDelete})} data={resident} handleDelete={handleDelete}
-                                         columnLabels={columnLabelsRes}
-                                         keyword={debouncedKeyword}
-                                         rowSelection={rowSelection}
-                                         setRowSelection={setRowSelection}
+                <DataTable<Resident, any> columns={ColumnsRes({handleUpdate, handleDelete})} data={resident}
+                                          handleDelete={handleDelete}
+                                          columnLabels={columnLabelsRes}
+                                          keyword={debouncedKeyword}
+                                          rowSelection={rowSelection}
+                                          setRowSelection={setRowSelection}
                 />
             </div>
         </>

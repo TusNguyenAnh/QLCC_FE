@@ -64,22 +64,22 @@ export function handleAxiosStatusCode(error: unknown) {
                 break;
 
             case 403:
-                toast.warning("Forbidden:", data.message);
+                toast.warning("Forbidden: " + data.message);
                 // Hiển thị lỗi không có quyền
                 break;
 
             case 404:
-                toast.warning("Not Found:", data.message);
+                toast.warning("Not Found: " + data.message);
                 // Hiển thị trang 404
                 break;
 
             case 500:
-                toast.error("Server Error:", data.message);
+                toast.error("Server Error: " + data.message);
                 // Báo lỗi hệ thống
                 break;
 
             default:
-                toast.message('Lỗi:', {
+                toast.message('Lỗi: ', {
                     description: data?.message || error.message,
                 })
         }

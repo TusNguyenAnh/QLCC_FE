@@ -153,7 +153,7 @@ function BusinessProcess() {
         }
     }
 
-    const getAllWorkflow = async (complexId:string) => {
+    const getAllWorkflow = async (complexId: string) => {
         try {
             const data = await getAllWfAPI(complexId)
             setWorkflows(data);
@@ -193,7 +193,7 @@ function BusinessProcess() {
         setEditingWorkflow(newWorkflow)
         setIsEditDialogOpen(true)
         setAction("CREATE")
-        getTopLevel('9ac0e3c0-1dd1-40b5-be3e-2cd073095f91')
+        getTopLevel(complex)
         setOpenDialog(true)
     }
 

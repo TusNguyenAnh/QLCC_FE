@@ -39,7 +39,7 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
 
     const [rowSelection, setRowSelection] = useState({});
     const [loading, setLoading] = useState(false);
-    const [tabValue, setTabValue] = useState("account") // mặc định tab đầu tiên
+    const [tabValue, setTabValue] = useState("resident") // mặc định tab đầu tiên
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500);
 
@@ -65,14 +65,14 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
     const submitCreateOrDeleteMember = async (data: any, orgId: string) => {
         setLoading(true);
         try {
-            if (tabValue === "account") {
+            if (tabValue === "resident") {
                 // call api them thanh vien
                 await updateResInOrg(Object.keys(data), orgId);
             } else {
                 // call api xoa thanh vien
                 await updateResInOrg(Object.keys(data), 'null');
             }
-            toast.success(tabValue === "account" ? "Thêm mới thành công!" : "Loại bỏ thành viên thành công!")
+            toast.success(tabValue === "resident" ? "Thêm mới thành công!" : "Loại bỏ thành viên thành công!")
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
@@ -94,10 +94,10 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
                     <div className="flex flex-col flex-1">
                         <SheetHeader className="border-solid border-b border-gray-300">
                             <SheetTitle>
-                                {tabValue === "account" ? "Thêm mới thành viên" : "Loại bỏ thành viên"}
+                                {tabValue === "resident" ? "Thêm mới thành viên" : "Loại bỏ thành viên"}
                             </SheetTitle>
                             <SheetDescription>
-                                {tabValue === "account"
+                                {tabValue === "resident"
                                     ? "Thêm thành viên mới vào ban quản trị. Nhấn nút lưu để hoàn thành việc thêm mới."
                                     : "Loại bỏ thành viên khỏi ban quản trị. Nhấn nút lưu để hoàn thành việc cập nhật"}
                             </SheetDescription>
@@ -105,8 +105,8 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
                         <Tabs value={tabValue} onValueChange={setTabValue}>
                             <div className="m-4 flex flex-wrap items-center justify-between md:flex-row">
                                 <TabsList>
-                                    <TabsTrigger value="account">Cư dân</TabsTrigger>
-                                    <TabsTrigger value="password">Thành viên</TabsTrigger>
+                                    <TabsTrigger value="resident">Cư dân</TabsTrigger>
+                                    <TabsTrigger value="member">Thành viên</TabsTrigger>
                                 </TabsList>
                                 <div className="flex items-center justify-end flex-1 gap-2">
                                     <Label>Thu gọn</Label>
@@ -115,7 +115,7 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
                                     <RotateCw className="hover: cursor-pointer" onClick={() => setKeyword("")}/>
                                 </div>
                             </div>
-                            <TabsContent value="account" className="p-4 mx-4 border border-gray-300 rounded-xl">
+                            <TabsContent value="resident" className="p-4 mx-4 border border-gray-300 rounded-xl">
                                 <DataTable<Resident, any> columns={ColumnsRes({handleUpdate, handleDelete})}
                                                           data={resident}
                                                           handleDelete={handleDelete}
@@ -125,7 +125,7 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
                                                           setRowSelection={setRowSelection}
                                 />
                             </TabsContent>
-                            <TabsContent value="password">
+                            <TabsContent value="member">
                                 <div className="p-4 mx-4 border border-gray-300 rounded-xl">
                                     <DataTable<Resident, any> columns={ColumnsRes({handleUpdate, handleDelete})}
                                                               data={member}

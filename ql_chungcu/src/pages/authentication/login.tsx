@@ -52,7 +52,7 @@ export function Login() {
         try {
             await login(data);
             const userInfo = await getProfile();
-            const org = await findByIdAPI(userInfo.resident.org_id);
+            const org = await findByIdAPI(userInfo.user.resident.org_id);
             setUser(userInfo);
             setOrgManage(org.id);
             setComplex(org.complex_id);

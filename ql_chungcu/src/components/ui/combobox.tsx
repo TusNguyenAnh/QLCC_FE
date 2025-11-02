@@ -71,7 +71,7 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                                 onSelect={(currentValue) => {
                                     setValue(currentValue)
                                     setOpenCommandList(false)
-                                    onChange("")
+                                    onChange("null")
                                 }}
                             >
                                 <CheckIcon

@@ -1,4 +1,4 @@
-import {useEffect} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {useForm, Controller} from "react-hook-form"
 import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod"
@@ -21,6 +21,9 @@ import {
 import type {fillItemOrg} from "@/types/Organization.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import type {bdItemCheckbox} from "@/types/Building.ts";
+import {AuthContext} from "@/context/AuthContext.tsx";
+import {handleAxiosStatusCode} from "@/utils/request.ts";
+import {getBdIdByOrgIdAPI} from "@/apis/orgAPI.ts";
 
 // Định nghĩa schema Zod
 const schema = z.object({
@@ -37,7 +40,7 @@ type ComponentProps = {
     action: string
     formData: fillItemOrg // bạn có thể định nghĩa rõ ràng kiểu dữ liệu nếu muốn
     itemsOrg: any[]
-    itemsBd: any[]
+    itemsAllBd: any[]
     onSubmit: (data: OrgFormSchema, orgId: string) => void
     open?: boolean;
     setOpen?: (open: boolean) => void;
@@ -51,7 +54,7 @@ export default function OrgForm({
                                     action,
                                     formData,
                                     itemsOrg,
-                                    itemsBd,
+                                    itemsAllBd,
                                     onSubmit
                                 }: ComponentProps) {
     const {
@@ -72,6 +75,9 @@ export default function OrgForm({
         },
     })
 
+    const [itemsBd, setItemsBd] = useState([]);
+    const {complex} = useContext(AuthContext);
+
     useEffect(() => {
         if (formData) {
             reset({
@@ -81,8 +87,23 @@ export default function OrgForm({
                 parent_org_id: formData.parent_org_id || "",
                 building: formData.building || [],
             })
+
+            getBdIdByOrgId(complex,formData.parent_org_id,itemsAllBd,formData.building)
         }
     }, [formData, reset])
+
+    const getBdIdByOrgId = async (complex: string, parentId: string, allBd: any,buildingManaged:any) => {
+        try {
+            const data = await getBdIdByOrgIdAPI(complex, parentId)
+            // neu tao moi thi building la cac toa nha chua dc quan ly con sua thi them cac toa nha da quan ly cua org hien tai
+            const building = data.concat(buildingManaged);
+            const buildingNotManaged = allBd.filter(item => building.includes(item.id));
+            setItemsBd(buildingNotManaged);
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    }
+
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -142,7 +163,11 @@ export default function OrgForm({
                                     render={({field}) => (
                                         <Combobox
                                             items={itemsOrg}
-                                            onChange={(value) => field.onChange(value)}
+                                            onChange={(value) => {
+                                                field.onChange(value)
+                                                getBdIdByOrgId(complex, value, itemsAllBd,formData.building)
+                                            }
+                                            }
                                             itemUpdate={action === "UPDATE" ? formData.parent_org_id : ""}
                                         />
                                     )}

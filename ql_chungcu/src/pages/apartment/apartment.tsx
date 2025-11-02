@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
 import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {toast} from "sonner";
@@ -23,6 +23,7 @@ import {DataTable} from "@/layouts/tables/data-table.tsx";
 import {ColumnsApt} from "@/layouts/columns/column-tb-apt.tsx";
 import type {fillItemApt} from "@/types/Apartment.ts";
 import {columnLabelsApt} from "@/utils/column-label.ts";
+import {AuthContext} from "@/context/AuthContext.tsx";
 
 function Apartment() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -37,17 +38,17 @@ function Apartment() {
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
-
+    const {complex} = useContext(AuthContext);
 
     //Lay tat ca cac phong ban
     useEffect(() => {
-        getAllBuilding()
+        getAllBuilding(complex)
     }, [])
 
     //Lay tat ca cac phong ban tru phong ban hien tai va con cua no de fill vao form action
-    const getAllBuilding = async () => {
+    const getAllBuilding = async (complexId: string) => {
         try {
-            const data = await getAllBdAPI()
+            const data = await getAllBdAPI(complexId)
 
             const items = data.map(function (item: bdItemCheckbox) {
                 return ({
@@ -74,7 +75,7 @@ function Apartment() {
     // xu ly khi nhan nut them moi
     const handleCreate = () => {
         setAptUpdate({})
-        getAllBuilding() // lay tat ca building de fill vao form
+        getAllBuilding(complex) // lay tat ca building de fill vao form
         setAction("CREATE")
         setOpenDialog(true)
     }
@@ -82,7 +83,7 @@ function Apartment() {
     // xu ly khi nhan nut sua
     const handleUpdate = (aptUpdate: fillItemApt): void => { // nhan tham so la thong tin hang can update
         setAptUpdate(aptUpdate)
-        getAllBuilding()
+        getAllBuilding(complex)
         setAction("UPDATE")
         setOpenDialog(true)
     }

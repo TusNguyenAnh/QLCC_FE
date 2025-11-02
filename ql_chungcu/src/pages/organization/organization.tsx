@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
 
 import {Button} from "@/components/ui/button.tsx";
@@ -17,6 +17,7 @@ import {columnLabelsOrg} from "@/utils/column-label.ts";
 import AddMemberOrg from "@/pages/organization/add-member-org.tsx";
 import type {bdItemCheckbox} from "@/types/Building.ts";
 import {getAllBdAPI} from "@/apis/bdAPI.ts";
+import {AuthContext} from "@/context/AuthContext.tsx";
 
 function Organization() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -35,6 +36,7 @@ function Organization() {
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
+    const {complex} = useContext(AuthContext);
 
 
     //Lay tat ca cac phong ban
@@ -42,13 +44,13 @@ function Organization() {
         getAllOrgAPI().then(data => {
             setOrg(data);
         })
-        getAllBuilding()
+        getAllBuilding(complex)
     }, [])
 
     //Lay tat ca cac phong ban tru phong ban hien tai va con cua no de fill vao form action
-    const getAllOrgWithoutChild = async (orgId: string) => {
+    const getAllOrgWithoutChild = async (orgId: string, complexId:string) => {
         try {
-            const data = await getAllOrgWithoutChildAPI(orgId)
+            const data = await getAllOrgWithoutChildAPI(orgId,complexId);
 
             const items = data.map(function (item: orgWithoutChild) {
                 return ({
@@ -62,9 +64,9 @@ function Organization() {
         }
     }
 
-    const getAllBuilding = async () => {
+    const getAllBuilding = async (complexId:string) => {
         try {
-            const data = await getAllBdAPI()
+            const data = await getAllBdAPI(complexId)
 
             const items = data.map(function (item: bdItemCheckbox) {
                 return ({
@@ -81,8 +83,8 @@ function Organization() {
     // xu ly khi nhan nut them moi
     const handleCreate = () => {
         setOrgUpdate({})
-        getAllOrgWithoutChild('00000000-0000-0000-0000-000000000000')
-        getAllBuilding()
+        getAllOrgWithoutChild('00000000-0000-0000-0000-000000000000',complex)
+        getAllBuilding(complex)
         setAction("CREATE")
         setOpenDialog(true)
     }
@@ -90,8 +92,8 @@ function Organization() {
     // xu ly khi nhan nut sua
     const handleUpdate = (orgUpdate: fillItemOrg): void => { // nhan tham so la thong tin hang can update
         setOrgUpdate(orgUpdate)
-        getAllOrgWithoutChild(orgUpdate.id)
-        getAllBuilding()
+        getAllOrgWithoutChild(orgUpdate.id,complex)
+        getAllBuilding(complex)
         setAction("UPDATE")
         setOpenDialog(true)
     }
@@ -139,7 +141,7 @@ function Organization() {
                          action={action}
                          formData={orgUpdate}
                          itemsOrg={listOrgWithoutChild}
-                         itemsBd={listBuilding}
+                         itemsAllBd={listBuilding}
                          onSubmit={submitCreateOrUpdate}>
                 </OrgForm>
             </div>

@@ -11,9 +11,14 @@ export const findByIdAPI = async (orgId: string) => {
     return res.data;
 }
 
+export const getBdIdByOrgIdAPI = async (complexId: string, parentId:string) => {
+    const res = await request.get(`org/getBdIdByOrgId/${complexId}/${parentId}`);
+    return res.data;
+}
 
-export const getAllOrgWithoutChildAPI = async (orgId: string) => {
-    const res = await request.get(`/org/getAllWithoutChild/${orgId}`);
+
+export const getAllOrgWithoutChildAPI = async (orgId: string, complexId:string) => {
+    const res = await request.get(`/org/getAllWithoutChild/${orgId}/${complexId}`);
     return res.data;
 }
 

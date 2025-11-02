@@ -1,8 +1,8 @@
 import request from "@/utils/request.ts";
 import type {BdFormSchema} from "@/pages/building/action-form-bd.tsx";
 
-export const getAllBdAPI = async () => {
-    const res = await request.get('/bd');
+export const getAllBdAPI = async (complexId: string) => {
+    const res = await request.get(`/bd/${complexId}`);
     return res.data;
 }
 
@@ -16,7 +16,7 @@ export const updateBdAPI = async (updateBd: BdFormSchema, bdId: string) => {
     return res.data;
 }
 
-export const deleteBdAPI = async (listBd:string[]) => {
+export const deleteBdAPI = async (listBd: string[]) => {
     const res = await request.post('/bd/delete', {listBd: listBd});
     return res;
 }

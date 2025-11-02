@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {toast} from "sonner";
 import {Button} from "@/components/ui/button.tsx";
@@ -12,6 +12,7 @@ import {ColumnsBd} from "@/layouts/columns/column-tb-bd.tsx";
 import BdForm, {type BdFormSchema} from "@/pages/building/action-form-bd.tsx";
 import {columnLabelsBd} from "@/utils/column-label.ts";
 import {useDebounce} from "use-debounce";
+import {AuthContext} from "@/context/AuthContext.tsx";
 
 export function Building() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -23,11 +24,12 @@ export function Building() {
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
+    const {complex} = useContext(AuthContext);
 
 
     //Lay tat ca cac phong ban
     useEffect(() => {
-        getAllBdAPI().then(data => {
+        getAllBdAPI(complex).then(data => {
             setBuilding(data);
         })
     }, [])
@@ -48,7 +50,7 @@ export function Building() {
 
     const handleDelete = async (listBd: string[]): void => { // nhan tham so la thong tin hang can update
         await deleteBdAPI(listBd)
-        const buildings = await getAllBdAPI();
+        const buildings = await getAllBdAPI(complex);
         setBuilding(buildings);
         setRowSelection({})
     }
@@ -62,7 +64,7 @@ export function Building() {
             } else {
                 await updateBdAPI(data, bdId);
             }
-            const buildings = await getAllBdAPI();
+            const buildings = await getAllBdAPI(complex);
             setBuilding(buildings);
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
