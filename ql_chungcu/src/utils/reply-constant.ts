@@ -5,6 +5,12 @@ export const PRIORITY_COLORS: Record<string, string> = {
     URGENT: "bg-red-100 text-red-800 border-red-200",
 }
 
+export const STATUS_COLORS: Record<string, string> = {
+    PENDING: "bg-blue-100 text-blue-800",
+    APPROVED: "bg-green-100 text-green-800",
+    REJECTED: "bg-red-100 text-red-800",
+}
+
 export const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("vi-VN", {
         day: "2-digit",

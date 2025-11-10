@@ -35,13 +35,13 @@ const items = [
         icon: Home,
         child: []
     },
-    {
-        id: 2,
-        title: "Quản lý cơ cấu tổ chức",
-        url: "/page/org",
-        icon: Network,
-        child: []
-    },
+    // {
+    //     id: 2,
+    //     title: "Quản lý cơ cấu tổ chức",
+    //     url: "/page/org",
+    //     icon: Network,
+    //     child: []
+    // },
     {
         id: 3,
         title: "Quản lý quy trình",

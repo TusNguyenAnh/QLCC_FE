@@ -18,12 +18,12 @@ const AppRouter: React.FC = () => (
             </MainLayout>
         }/>
 
-        <Route path="/page/org" element={
-            <ProtectedRoute>
-                <MainLayout content={<Organization/>}>
-                </MainLayout>
-            </ProtectedRoute>
-        }/>
+        {/*<Route path="/page/org" element={*/}
+        {/*    <ProtectedRoute>*/}
+        {/*        <MainLayout content={<Organization/>}>*/}
+        {/*        </MainLayout>*/}
+        {/*    </ProtectedRoute>*/}
+        {/*}/>*/}
 
         <Route path="/page/bd" element={
             <ProtectedRoute>
