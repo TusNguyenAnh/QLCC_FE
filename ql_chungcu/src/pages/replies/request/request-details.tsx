@@ -203,6 +203,7 @@ export function RequestDetails({request, workflow, onSubmit, open, setOpen}: Req
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <Textarea
+                                    className="focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
                                     placeholder="Nhập ghi chú (bắt buộc khi từ chối)..."
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}

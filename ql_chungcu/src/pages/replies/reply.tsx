@@ -1,120 +1,275 @@
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {RequestList} from "./request/request-list.tsx"
-import {RequestDetails} from "./request/request-details.tsx"
-import {StatsCards} from "./overview/stats-cards..tsx"
-import {useContext, useEffect, useState} from "react"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {RequestList} from "./request/request-list.tsx";
+import {RequestDetails} from "./request/request-details.tsx";
+import {StatsCards} from "./overview/stats-cards..tsx";
+import {useContext, useEffect, useState} from "react";
 import {TaskType} from "@/pages/replies/task-type/task-type.tsx";
-import type {ActionSummary, Task, TaskWorkflow} from "@/types/Task.ts";
+import type {
+    ActionSummary,
+    Task,
+    TaskWorkflow,
+} from "@/types/Task.ts";
 import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {
     approveTaskAPI,
-    getAllTaskByOrgAPI, getTaskApprovedAPI,
+    getAllTaskByOrgAPI,
+    getTaskApprovedAPI,
     getWfByTaskAPI,
     rejectTaskAPI,
-    taskActionSummaryAPI
+    taskActionSummaryAPI,
 } from "@/apis/taskAPI.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
 import {toast} from "sonner";
-import FilterReqForm, {type FilterReqFormSchema} from "@/pages/replies/request/filter-form-request.tsx";
+import FilterReqForm, {
+    type FilterReqFormSchema,
+} from "@/pages/replies/request/filter-form-request.tsx";
+import {DataPagination} from "@/layouts/pagination/data-pagination.tsx";
+import type {PaginationMeta} from "@/types/Pagination.ts";
 
 function Reply() {
-    const [selectedRequest, setSelectedRequest] = useState<Task | null>(null)
-    const [listTask, setListTask] = useState<Task[] | []>([])
-    const [listTaskApproved, setListTaskApproved] = useState<Task[] | []>([])
-    const [lengthTaskPending, setLengthTaskPending] = useState<number>(0)
-    const [workflowTask, setWorkflowTask] = useState<TaskWorkflow[] | null>(null)
-    const [taskAction, setTaskAction] = useState<ActionSummary[] | null>(null)
+    const [selectedRequest, setSelectedRequest] = useState<Task | null>(null);
+    const [listTask, setListTask] = useState<Task[] | []>([]);
+    const [listTaskApproved, setListTaskApproved] = useState<Task[] | []>([]);
+    const [lengthTaskPending, setLengthTaskPending] = useState<number>(0);
+    const [workflowTask, setWorkflowTask] = useState<TaskWorkflow[] | null>(null);
+    const [taskAction, setTaskAction] = useState<ActionSummary[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [openReqDetail, setOpenReqDetail] = useState(false);
+
+    // Key để reset filter form khi chuyển tab
+    const [pendingFilterKey, setPendingFilterKey] = useState(0);
+    const [rejectedFilterKey, setRejectedFilterKey] = useState(0);
+    const [approvedFilterKey, setApprovedFilterKey] = useState(0);
+
+    // Pagination states for pending requests
+    const [pendingMeta, setPendingMeta] = useState<PaginationMeta>({
+        current_page: 1,
+        last_page: 1,
+        per_page: 50,
+        total: 0,
+    });
+    const [pendingPage, setPendingPage] = useState(1);
+    const [pendingPerPage, setPendingPerPage] = useState(50);
+    const [pendingFilter, setPendingFilter] = useState<FilterReqFormSchema>({});
+
+    // Pagination states for rejected requests
+    const [rejectedMeta, setRejectedMeta] = useState<PaginationMeta>({
+        current_page: 1,
+        last_page: 1,
+        per_page: 50,
+        total: 0,
+    });
+    const [rejectedPage, setRejectedPage] = useState(1);
+    const [rejectedPerPage, setRejectedPerPage] = useState(50);
+    const [rejectedFilter, setRejectedFilter] = useState<FilterReqFormSchema>({});
+
+    // Pagination states for approved requests
+    const [approvedMeta, setApprovedMeta] = useState<PaginationMeta>({
+        current_page: 1,
+        last_page: 1,
+        per_page: 50,
+        total: 0,
+    });
+    const [approvedPage, setApprovedPage] = useState(1);
+    const [approvedPerPage, setApprovedPerPage] = useState(50);
+    const [approvedFilter, setApprovedFilter] = useState<FilterReqFormSchema>({});
 
     const {orgManage} = useContext(AuthContext);
 
     const getWorkflowForTask = async ($taskId: string) => {
         try {
-            const data = await getWfByTaskAPI($taskId)
-            setWorkflowTask(data)
+            const data = await getWfByTaskAPI($taskId);
+            setWorkflowTask(data);
         } catch (err) {
             handleAxiosStatusCode(err);
         }
-    }
+    };
 
-
-    const getAllTaskByOrg = async (orgId: string, taskStatus: number, filterTask: FilterReqFormSchema) => {
+    const getAllTaskByOrg = async (
+        orgId: string,
+        taskStatus: number,
+        filterTask: FilterReqFormSchema,
+        page = 1,
+        perPage = 50,
+        updateTotalCount = false // Flag để quyết định có cập nhật total count không
+    ) => {
         setLoading(true);
         try {
-            const data = await getAllTaskByOrgAPI(orgId, taskStatus, filterTask)
+            const response = await getAllTaskByOrgAPI(
+                orgId,
+                taskStatus,
+                filterTask,
+                page,
+                perPage
+            );
             if (taskStatus === 2) {
-                setLengthTaskPending(data.length)
+                // Chỉ cập nhật tổng số khi có yêu cầu mới hoặc click tab tổng quan
+                // KHÔNG cập nhật khi filter vì filter không phản ánh tổng số thực tế
+                if (updateTotalCount) {
+                    setLengthTaskPending(response.meta.total);
+                }
+                setPendingMeta(response.meta);
+                setListTask(response.data);
+            } else if (taskStatus === 3) {
+                setRejectedMeta(response.meta);
+                setListTask(response.data);
             }
-            setListTask(data);
-            setSelectedRequest(null)
+            setSelectedRequest(null);
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
             setTimeout(() => {
-                setLoading(false); // tắt sau 2 giây
-            }, 200)
+                setLoading(false);
+            }, 200);
         }
-    }
+    };
 
-    const getTaskApproved = async (orgId: string, filterTask: FilterReqFormSchema) => {
+    const getTaskApproved = async (
+        orgId: string,
+        filterTask: FilterReqFormSchema,
+        page = 1,
+        perPage = 50
+    ) => {
         setLoading(true);
         try {
-            const data = await getTaskApprovedAPI(orgId, filterTask)
-            setListTaskApproved(data);
-            setSelectedRequest(null)
+            const response = await getTaskApprovedAPI(
+                orgId,
+                filterTask,
+                page,
+                perPage
+            );
+            setApprovedMeta(response.meta);
+            setListTaskApproved(response.data);
+            setSelectedRequest(null);
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
             setTimeout(() => {
-                setLoading(false); // tắt sau 2 giây
-            }, 200)
+                setLoading(false);
+            }, 200);
         }
-    }
-
+    };
 
     const taskActionSummary = async () => {
         try {
-            const data = await taskActionSummaryAPI()
+            const data = await taskActionSummaryAPI();
             setTaskAction(data);
+            // Cập nhật tổng số yêu cầu pending khi vào tab tổng quan
+            await getAllTaskByOrg(orgManage, 2, {}, 1, 50, true);
         } catch (err) {
             handleAxiosStatusCode(err);
         }
-    }
+    };
 
     const onSelectTask = (task: Task) => {
         setSelectedRequest(task);
         getWorkflowForTask(task.id);
         setOpenReqDetail(true);
-    }
+    };
 
-
-    const submitApproveOrReject = async (action: string, comment: string, taskId: string) => {
+    const submitApproveOrReject = async (
+        action: string,
+        comment: string,
+        taskId: string
+    ) => {
         setLoading(true);
         const data = {
-            'action': action,
-            'comment': comment,
-        }
+            action: action,
+            comment: comment,
+        };
         try {
             if (action === "APPROVED") {
                 await approveTaskAPI(data, taskId);
             } else {
                 await rejectTaskAPI(data, taskId);
             }
-            getAllTaskByOrg(orgManage, 2, {})
-            setSelectedRequest(null)
-            toast.success(action == "APPROVED" ? "Phê duyệt thành công!" : "Đã từ chối xét duyệt yêu cầu!")
+            getAllTaskByOrg(
+                orgManage,
+                2,
+                pendingFilter,
+                pendingPage,
+                pendingPerPage,
+                true
+            ); // CẬP NHẬT total sau khi approve/reject
+            setSelectedRequest(null);
+            toast.success(
+                action == "APPROVED"
+                    ? "Phê duyệt thành công!"
+                    : "Đã từ chối xét duyệt yêu cầu!"
+            );
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
             setLoading(false);
         }
-    }
+    };
+
+    // Handlers for pending requests pagination
+    // 1. Thay đổi trang
+    const handlePendingPageChange = (page: number) => {
+        setPendingPage(page);
+        getAllTaskByOrg(orgManage, 2, pendingFilter, page, pendingPerPage, false); // Không cập nhật total khi chỉ chuyển trang
+    };
+// 2. Thay đổi số bản ghi trên trang
+    const handlePendingPerPageChange = (perPage: number) => {
+        setPendingPerPage(perPage);
+        setPendingPage(1);
+        getAllTaskByOrg(orgManage, 2, pendingFilter, 1, perPage, false); // Không cập nhật total khi chỉ thay đổi perPage
+    };
+// 3. Áp dụng filter
+    const handlePendingFilter = (
+        orgId: string,
+        taskStatus: number,
+        filter: FilterReqFormSchema
+    ) => {
+        setPendingFilter(filter);
+        setPendingPage(1);
+        getAllTaskByOrg(orgId, taskStatus, filter, 1, pendingPerPage, false); // KHÔNG cập nhật total khi filter
+    };
+
+    // Handlers for rejected requests pagination
+    const handleRejectedPageChange = (page: number) => {
+        setRejectedPage(page);
+        getAllTaskByOrg(orgManage, 3, rejectedFilter, page, rejectedPerPage);
+    };
+
+    const handleRejectedPerPageChange = (perPage: number) => {
+        setRejectedPerPage(perPage);
+        setRejectedPage(1);
+        getAllTaskByOrg(orgManage, 3, rejectedFilter, 1, perPage);
+    };
+
+    const handleRejectedFilter = (
+        orgId: string,
+        taskStatus: number,
+        filter: FilterReqFormSchema
+    ) => {
+        setRejectedFilter(filter);
+        setRejectedPage(1);
+        getAllTaskByOrg(orgId, taskStatus, filter, 1, rejectedPerPage);
+    };
+
+    // Handlers for approved requests pagination
+    const handleApprovedPageChange = (page: number) => {
+        setApprovedPage(page);
+        getTaskApproved(orgManage, approvedFilter, page, approvedPerPage);
+    };
+
+    const handleApprovedPerPageChange = (perPage: number) => {
+        setApprovedPerPage(perPage);
+        setApprovedPage(1);
+        getTaskApproved(orgManage, approvedFilter, 1, perPage);
+    };
+
+    const handleApprovedFilter = (orgId: string, filter: FilterReqFormSchema) => {
+        setApprovedFilter(filter);
+        setApprovedPage(1);
+        getTaskApproved(orgId, filter, 1, approvedPerPage);
+    };
 
     useEffect(() => {
-        taskActionSummary();
-        getAllTaskByOrg(orgManage, 2, {})
-    }, [])
+        taskActionSummary(); // Sẽ tự động cập nhật total count
+    }, []);
 
     return (
         <>
@@ -124,14 +279,38 @@ function Reply() {
                         <TabsTrigger value="overview" onClick={taskActionSummary}>
                             Tổng quan
                         </TabsTrigger>
-                        <TabsTrigger value="requests" onClick={() => getAllTaskByOrg(orgManage, 2, {})}>
+                        <TabsTrigger
+                            value="requests"
+                            onClick={() => {
+                                setPendingFilter({}); // Reset filter về mặc định
+                                setPendingPage(1); // Reset về trang 1
+                                setPendingFilterKey((prev) => prev + 1); // Force re-render form
+                                getAllTaskByOrg(orgManage, 2, {}, 1, pendingPerPage, false);
+                            }}
+                        >
                             Yêu cầu cần xét duyệt
                         </TabsTrigger>
-                        <TabsTrigger value="reject" onClick={() => getAllTaskByOrg(orgManage, 3, {})}>
+                        <TabsTrigger
+                            value="reject"
+                            onClick={() => {
+                                setRejectedFilter({}); // Reset filter về mặc định
+                                setRejectedPage(1); // Reset về trang 1
+                                setRejectedFilterKey((prev) => prev + 1); // Force re-render form
+                                getAllTaskByOrg(orgManage, 3, {}, 1, rejectedPerPage, false);
+                            }}
+                        >
                             Yêu cầu bị từ chối
                         </TabsTrigger>
 
-                        <TabsTrigger value="approved">
+                        <TabsTrigger
+                            value="approved"
+                            onClick={() => {
+                                setApprovedFilter({}); // Reset filter về mặc định
+                                setApprovedPage(1); // Reset về trang 1
+                                setApprovedFilterKey((prev) => prev + 1); // Force re-render form
+                                getTaskApproved(orgManage, {}, 1, approvedPerPage);
+                            }}
+                        >
                             Yêu cầu đã xét duyệt
                         </TabsTrigger>
 
@@ -139,44 +318,94 @@ function Reply() {
                     </TabsList>
 
                     <TabsContent value="overview" className="flex-1 p-6 space-y-6">
-                        <StatsCards taskAction={taskAction} pendingReviewTotal={lengthTaskPending}/>
+                        <StatsCards
+                            taskAction={taskAction}
+                            pendingReviewTotal={lengthTaskPending}
+                        />
                     </TabsContent>
 
-                    <TabsContent value="requests" className="flex-1 p-6">
-                        <FilterReqForm onSubmitPdAndRj={getAllTaskByOrg} orgId={orgManage} type={"pd"}/>
-                        <RequestList requests={listTask} onSelectRequest={onSelectTask} loading={loading}
-                                     type={"pd"}
+                    <TabsContent value="requests" className="flex-1 p-6 flex flex-col">
+                        <FilterReqForm
+                            key={pendingFilterKey}
+                            onSubmitPdAndRj={handlePendingFilter}
+                            orgId={orgManage}
+                            type={"pd"}
                         />
+                        <RequestList
+                            requests={listTask}
+                            onSelectRequest={onSelectTask}
+                            loading={loading}
+                            type={"pd"}
+                        />
+                        {pendingMeta.total > 0 && (
+                            <DataPagination
+                                meta={pendingMeta}
+                                onPageChange={handlePendingPageChange}
+                                onPerPageChange={handlePendingPerPageChange}
+                            />
+                        )}
                         {selectedRequest ? (
                             <RequestDetails
                                 request={selectedRequest}
                                 workflow={workflowTask}
                                 onSubmit={submitApproveOrReject}
                                 open={openReqDetail}
-                                setOpen={setOpenReqDetail}/>
+                                setOpen={setOpenReqDetail}
+                            />
                         ) : null}
                     </TabsContent>
 
-                    <TabsContent value="reject" className="flex-1 p-6">
-                        <FilterReqForm onSubmitPdAndRj={getAllTaskByOrg} orgId={orgManage} type={"rj"}/>
-                        <RequestList requests={listTask} onSelectRequest={onSelectTask} loading={loading}
-                                     type={"rj"}
+                    <TabsContent value="reject" className="flex-1 p-6 flex flex-col">
+                        <FilterReqForm
+                            key={rejectedFilterKey}
+                            onSubmitPdAndRj={handleRejectedFilter}
+                            orgId={orgManage}
+                            type={"rj"}
                         />
+                        <RequestList
+                            requests={listTask}
+                            onSelectRequest={onSelectTask}
+                            loading={loading}
+                            type={"rj"}
+                        />
+                        {rejectedMeta.total > 0 && (
+                            <DataPagination
+                                meta={rejectedMeta}
+                                onPageChange={handleRejectedPageChange}
+                                onPerPageChange={handleRejectedPerPageChange}
+                            />
+                        )}
                         {selectedRequest ? (
                             <RequestDetails
                                 request={selectedRequest}
                                 workflow={workflowTask}
                                 onSubmit={submitApproveOrReject}
                                 open={openReqDetail}
-                                setOpen={setOpenReqDetail}/>
+                                setOpen={setOpenReqDetail}
+                            />
                         ) : null}
                     </TabsContent>
 
-                    <TabsContent value="approved" className="flex-1 p-6">
-                        <FilterReqForm onSubmit={getTaskApproved} orgId={orgManage} type={"apd"}/>
-                        <RequestList requests={listTaskApproved} onSelectRequest={onSelectTask}
-                                     loading={loading} type={"apd"}/>
-
+                    <TabsContent value="approved" className="flex-1 p-6 flex flex-col">
+                        <FilterReqForm
+                            key={approvedFilterKey}
+                            onSubmit={handleApprovedFilter}
+                            orgId={orgManage}
+                            type={"apd"}
+                        />
+                        <RequestList
+                            requests={listTaskApproved}
+                            onSelectRequest={onSelectTask}
+                            loading={loading}
+                            type={"apd"}
+                        />
+                        {approvedMeta.total > 0 && (
+                            <DataPagination
+                                meta={approvedMeta}
+                                onPageChange={handleApprovedPageChange}
+                                onPerPageChange={handleApprovedPerPageChange}
+                            />
+                        )}
                         {selectedRequest ? (
                             <RequestDetails
                                 open={openReqDetail}
@@ -194,7 +423,7 @@ function Reply() {
                 </Tabs>
             </div>
         </>
-    )
+    );
 }
 
 export default Reply;
