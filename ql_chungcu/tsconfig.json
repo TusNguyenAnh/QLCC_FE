@@ -9,6 +9,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   }
 }

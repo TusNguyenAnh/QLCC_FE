@@ -25,6 +25,8 @@ import FilterReqForm, {
 } from "@/pages/replies/request/filter-form-request.tsx";
 import {DataPagination} from "@/layouts/pagination/data-pagination.tsx";
 import type {PaginationMeta} from "@/types/Pagination.ts";
+import type {listMediaFile} from "@/types/MediaFile.ts";
+import {getMediaFileAPI} from "@/apis/mediaFileAPI.ts";
 
 function Reply() {
     const [selectedRequest, setSelectedRequest] = useState<Task | null>(null);
@@ -35,6 +37,7 @@ function Reply() {
     const [taskAction, setTaskAction] = useState<ActionSummary[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [openReqDetail, setOpenReqDetail] = useState(false);
+    const [mediaFiles, setMediaFiles] = useState<listMediaFile | null>(null);
 
     // Key để reset filter form khi chuyển tab
     const [pendingFilterKey, setPendingFilterKey] = useState(0);
@@ -84,6 +87,15 @@ function Reply() {
             handleAxiosStatusCode(err);
         }
     };
+    const getMediaFile = async ($ownerId: string) => {
+        try {
+            const data = await getMediaFileAPI($ownerId);
+            setMediaFiles(data);
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    };
+
 
     const getAllTaskByOrg = async (
         orgId: string,
@@ -164,6 +176,7 @@ function Reply() {
     const onSelectTask = (task: Task) => {
         setSelectedRequest(task);
         getWorkflowForTask(task.id);
+        getMediaFile(task.id);
         setOpenReqDetail(true);
     };
 
@@ -349,6 +362,7 @@ function Reply() {
                                 request={selectedRequest}
                                 workflow={workflowTask}
                                 onSubmit={submitApproveOrReject}
+                                mediaFiles={mediaFiles}
                                 open={openReqDetail}
                                 setOpen={setOpenReqDetail}
                             />
@@ -379,6 +393,7 @@ function Reply() {
                             <RequestDetails
                                 request={selectedRequest}
                                 workflow={workflowTask}
+                                mediaFiles={mediaFiles}
                                 onSubmit={submitApproveOrReject}
                                 open={openReqDetail}
                                 setOpen={setOpenReqDetail}
@@ -412,6 +427,7 @@ function Reply() {
                                 setOpen={setOpenReqDetail}
                                 request={selectedRequest}
                                 workflow={workflowTask}
+                                mediaFiles={mediaFiles}
                                 onSubmit={submitApproveOrReject}
                             />
                         ) : null}
