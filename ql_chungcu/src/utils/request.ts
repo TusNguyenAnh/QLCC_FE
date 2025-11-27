@@ -3,7 +3,8 @@ import axios from 'axios';
 import {toast} from "sonner";
 
 const request = axios.create({
-    baseURL: 'http://localhost:8000/api', // Sử dụng proxy
+    // baseURL: 'http://midtob.com:8000/api',
+    baseURL: 'http://localhost:8000/api',
     headers: {
         Accept: 'application/json',
     },
