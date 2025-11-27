@@ -1,4 +1,4 @@
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -6,28 +6,29 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {z} from "zod"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {useForm} from "react-hook-form"
+} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useForm} from "react-hook-form";
 import {useContext, useEffect, useState} from "react";
 import {toast, Toaster} from "sonner";
 import {Loader2} from "lucide-react";
 import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {getProfile, login} from "@/apis/authAPI.ts";
 import {useNavigate} from "react-router-dom";
-import {AuthContext} from "@/context/AuthContext.tsx";
 import {findByIdAPI} from "@/apis/orgAPI.ts";
+import {getPermissions, setToken} from "@/utils/auth.ts";
+import {AuthContext} from "@/context/AuthContext.tsx";
 
 // Định nghĩa schema Zod
 const schema = z.object({
     username: z.string().min(1, "Tên đăng nhập không được để trống"),
     password: z.string().optional(),
-})
+});
 
-export type LoginFormSchema = z.infer<typeof schema>
+export type LoginFormSchema = z.infer<typeof schema>;
 
 export function Login() {
     const {
@@ -40,54 +41,73 @@ export function Login() {
             username: "",
             password: "",
         },
-    })
+    });
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const {user,setUser,setComplex,setOrgManage} = useContext(AuthContext);
+    const {user, setUser, setComplex, setOrgManage, setPermissions, clearAuth} = useContext(AuthContext);
 
-
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: LoginFormSchema) => {
         setLoading(true);
         try {
-            await login(data);
+            // Clear auth cũ trước khi login mới
+            clearAuth();
+
+            const loginRes = await login(data);
+            setToken(loginRes.access_token);
             const userInfo = await getProfile();
-            const org = await findByIdAPI(userInfo.user.resident.org_id);
+            if (userInfo.user.resident) {
+                const org = await findByIdAPI(userInfo.user.resident.org_id);
+                setOrgManage(org.id);
+            } else {
+                setOrgManage(null);
+            }
             setUser(userInfo);
-            setOrgManage(org.id);
-            setComplex(org.complex_id);
+            setComplex(userInfo.user.complex_id);
+
+            // Load permissions from token after login
+            const userPermissions = getPermissions();
+            setPermissions(userPermissions);
+
             toast.success("Đăng nhập thành công!");
-            navigate("/");
+            navigate("/page/dashboard");
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         if (user) {
-            navigate("/");  // ✅ An toàn
+            navigate("/page/dashboard");
         }
     }, [user, navigate]);
 
     if (user) return null;
 
     return (
-        <div className="flex items-center justify-center min-h-screen"
-             style={{backgroundColor: `color-mix(in oklab, var(--color-black) 50%, transparent)`}}>
+        <div
+            className="flex items-center justify-center min-h-screen"
+            style={{
+                backgroundColor: `color-mix(in oklab, var(--color-black) 50%, transparent)`,
+            }}
+        >
             <Card className="w-full max-w-sm">
                 {loading && (
                     <div className="absolute inset-0 z-10 bg-white/50 flex items-center justify-center">
-                        <Loader2 className="h-6 w-6 animate-spin text-primary mr-1"/>Loading...
+                        <Loader2 className="h-6 w-6 animate-spin text-primary mr-1"/>
+                        Loading...
                     </div>
                 )}
 
-                <form className="grid gap-4"
-                      onSubmit={handleSubmit((data) => {
-                          // Gửi ngược data + id lên cha
-                          onSubmit(data)
-                      })}>
+                <form
+                    className="grid gap-4"
+                    onSubmit={handleSubmit((data: LoginFormSchema) => {
+                        // Gửi ngược data + id lên cha
+                        onSubmit(data);
+                    })}
+                >
                     <CardHeader>
                         <CardTitle>Login to your account</CardTitle>
                         <CardDescription>
@@ -100,10 +120,16 @@ export function Login() {
                             <div className="grid gap-2">
                                 <Label htmlFor="username">Username</Label>
 
-                                <Input id="username" {...register("username")} autoComplete="username"
+                                <Input
+                                    id="username"
+                                    {...register("username")}
+                                    autoComplete="username"
                                 />
-                                {errors.username &&
-                                    <p className="text-sm text-red-500">{errors.username.message}</p>}
+                                {errors.username && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.username.message}
+                                    </p>
+                                )}
                             </div>
                             <div className="grid gap-2">
                                 <div className="flex items-center">
@@ -116,11 +142,17 @@ export function Login() {
                                         Forgot your password?
                                     </a>
                                 </div>
-                                <Input id="password" {...register("password")} type="password"
-                                       autoComplete="current-password"
+                                <Input
+                                    id="password"
+                                    {...register("password")}
+                                    type="password"
+                                    autoComplete="current-password"
                                 />
-                                {errors.password &&
-                                    <p className="text-sm text-red-500">{errors.password.message}</p>}
+                                {errors.password && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.password.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </CardContent>
@@ -133,6 +165,5 @@ export function Login() {
             </Card>
             <Toaster position="bottom-left" richColors/>
         </div>
-
-    )
+    );
 }

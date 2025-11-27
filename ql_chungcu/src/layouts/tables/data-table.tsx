@@ -44,7 +44,7 @@ interface DataTableProps<TData, TValue> {
     showColumns?: boolean;
     rowSelection: any,
     setRowSelection: any
-    handleDelete: (listItem: string[]) => void
+    handleDelete?: (listItem: string[]) => void
 }
 
 export function DataTable<TData, TValue>
