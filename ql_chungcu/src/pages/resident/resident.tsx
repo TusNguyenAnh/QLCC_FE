@@ -58,7 +58,7 @@ export function Resident() {
         // setOpenDialog(true)
         // console.log(listBd);
         await deleteBdAPI(listBd)
-        const buildings = await getAllBdAPI(complex);
+        const buildings = await getAllBdAPI();
         setBuilding(buildings);
         setRowSelection({})
     }
@@ -72,7 +72,7 @@ export function Resident() {
             } else {
                 await updateBdAPI(data, bdId);
             }
-            const buildings = await getAllBdAPI(complex);
+            const buildings = await getAllBdAPI();
             setBuilding(buildings);
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {

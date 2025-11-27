@@ -24,6 +24,7 @@ import {ColumnsApt} from "@/layouts/columns/column-tb-apt.tsx";
 import type {fillItemApt} from "@/types/Apartment.ts";
 import {columnLabelsApt} from "@/utils/column-label.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
+import {findByIdAPI} from "@/apis/orgAPI.ts";
 
 function Apartment() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -38,17 +39,22 @@ function Apartment() {
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
-    const {complex} = useContext(AuthContext);
+    const {orgManage} = useContext(AuthContext);
 
     //Lay tat ca cac phong ban
     useEffect(() => {
-        getAllBuilding(complex)
+        getAllBuilding()
     }, [])
 
-    //Lay tat ca cac phong ban tru phong ban hien tai va con cua no de fill vao form action
-    const getAllBuilding = async (complexId: string) => {
+    const getAllBuilding = async () => {
         try {
-            const data = await getAllBdAPI(complexId)
+            let data = await getAllBdAPI()
+
+            if (orgManage) {
+                // Lọc toà nhà theo orgManage
+                const bdByOrg = await findByIdAPI(orgManage);
+                data = data.filter(item => bdByOrg.building.includes(item.id));
+            }
 
             const items = data.map(function (item: bdItemCheckbox) {
                 return ({
@@ -75,7 +81,7 @@ function Apartment() {
     // xu ly khi nhan nut them moi
     const handleCreate = () => {
         setAptUpdate({})
-        getAllBuilding(complex) // lay tat ca building de fill vao form
+        getAllBuilding() // lay tat ca building de fill vao form
         setAction("CREATE")
         setOpenDialog(true)
     }
@@ -83,7 +89,7 @@ function Apartment() {
     // xu ly khi nhan nut sua
     const handleUpdate = (aptUpdate: fillItemApt): void => { // nhan tham so la thong tin hang can update
         setAptUpdate(aptUpdate)
-        getAllBuilding(complex)
+        getAllBuilding()
         setAction("UPDATE")
         setOpenDialog(true)
     }

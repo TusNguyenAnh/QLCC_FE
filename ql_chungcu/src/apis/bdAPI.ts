@@ -1,8 +1,8 @@
 import request from "@/utils/request.ts";
 import type {BdFormSchema} from "@/pages/building/action-form-bd.tsx";
 
-export const getAllBdAPI = async (complexId: string) => {
-    const res = await request.get(`/bd/${complexId}`);
+export const getAllBdAPI = async () => {
+    const res = await request.get(`/bd`);
     return res.data;
 }
 

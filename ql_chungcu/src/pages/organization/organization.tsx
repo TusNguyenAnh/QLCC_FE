@@ -44,7 +44,7 @@ function Organization() {
         getAllOrgAPI().then(data => {
             setOrg(data);
         })
-        getAllBuilding(complex)
+        getAllBuilding()
     }, [])
 
     //Lay tat ca cac phong ban tru phong ban hien tai va con cua no de fill vao form action
@@ -64,9 +64,9 @@ function Organization() {
         }
     }
 
-    const getAllBuilding = async (complexId:string) => {
+    const getAllBuilding = async () => {
         try {
-            const data = await getAllBdAPI(complexId)
+            const data = await getAllBdAPI()
 
             const items = data.map(function (item: bdItemCheckbox) {
                 return ({
@@ -84,7 +84,7 @@ function Organization() {
     const handleCreate = () => {
         setOrgUpdate({})
         getAllOrgWithoutChild('00000000-0000-0000-0000-000000000000',complex)
-        getAllBuilding(complex)
+        getAllBuilding()
         setAction("CREATE")
         setOpenDialog(true)
     }
@@ -93,7 +93,7 @@ function Organization() {
     const handleUpdate = (orgUpdate: fillItemOrg): void => { // nhan tham so la thong tin hang can update
         setOrgUpdate(orgUpdate)
         getAllOrgWithoutChild(orgUpdate.id,complex)
-        getAllBuilding(complex)
+        getAllBuilding()
         setAction("UPDATE")
         setOpenDialog(true)
     }

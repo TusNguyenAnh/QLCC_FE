@@ -47,7 +47,7 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                     role="combobox"
                     className="w-full justify-between"
                 >
-                    {value != "" && value != null
+                    {value != "" && value != null && value != "null"
                         ? items.find((item) => item.value === value)?.label
                         : "Select item..."}
                     <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
@@ -77,7 +77,7 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                                 <CheckIcon
                                     className={cn(
                                         "mr-2 h-4 w-4",
-                                        value == "" || value == null ? "opacity-100" : "opacity-0"
+                                        (value == "" || value == null) ? "opacity-100" : "opacity-0"
                                     )}
                                 />
                                 Không thuộc

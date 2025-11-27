@@ -29,14 +29,14 @@ export function Building() {
 
     //Lay tat ca cac phong ban
     useEffect(() => {
-        getAllBdAPI(complex).then(data => {
+        getAllBdAPI().then(data => {
             setBuilding(data);
         })
     }, [])
 
     // xu ly khi nhan nut them moi
     const handleCreate = () => {
-        setBdUpdate({complex_id: "1"}) // complex_id se lay trong localstorage hoac co the lay tu api
+        setBdUpdate({complex_id: complex}) // complex_id se lay trong localstorage hoac co the lay tu api
         setAction("CREATE")
         setOpenDialog(true)
     }
@@ -50,7 +50,7 @@ export function Building() {
 
     const handleDelete = async (listBd: string[]): void => { // nhan tham so la thong tin hang can update
         await deleteBdAPI(listBd)
-        const buildings = await getAllBdAPI(complex);
+        const buildings = await getAllBdAPI();
         setBuilding(buildings);
         setRowSelection({})
     }
@@ -64,7 +64,7 @@ export function Building() {
             } else {
                 await updateBdAPI(data, bdId);
             }
-            const buildings = await getAllBdAPI(complex);
+            const buildings = await getAllBdAPI();
             setBuilding(buildings);
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
