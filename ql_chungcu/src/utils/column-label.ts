@@ -32,3 +32,16 @@ export const columnLabelsRes: Record<string, string> = {
     birthday: "Ngày sinh",
     gender: "Giới tính",
 }
+
+export const columnLabelsMem: Record<string, string> = {
+    fullname: "Người dùng",
+    email: "Email",
+    phone_number: "Số điện thoại",
+    status: "Trạng thái"
+}
+
+export const columnLabelsPerm: Record<string, string> = {
+    name: "Quyền hạn",
+    module: "Danh mục",
+    total_roles: "Vai trò",
+}

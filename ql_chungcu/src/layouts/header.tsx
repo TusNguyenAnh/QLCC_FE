@@ -41,6 +41,7 @@ export default function Header() {
         res: 'Quản lý cư dân',
         bsn: 'Quản lý quy trình',
         reply: 'Xử lý yêu cầu',
+        authori: 'Quản lý truy cập',
     };
 
     // Hàm tạo mảng breadcrumb từ URL
