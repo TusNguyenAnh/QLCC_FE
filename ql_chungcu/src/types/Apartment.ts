@@ -6,6 +6,7 @@ export type Apt = {
     building_id: string;
     apt_type: string;
     description: string;
+    floor: number;
 }
 
 export type fillItemApt = {
@@ -15,5 +16,6 @@ export type fillItemApt = {
     description: string;
     building_id: string;
     apt_type: string;
+    floor: number;
 }
 

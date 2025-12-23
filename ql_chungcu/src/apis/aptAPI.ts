@@ -16,7 +16,17 @@ export const updateAptAPI = async (updateApt: AptFormSchema, aptId: string) => {
     return res.data;
 }
 
+export const createAptUseFileAPI = async (formData: FormData) => {
+    const res = await request.post("/apt/import-excel", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return res.data;
+};
+
 export const deleteBdAPI = async (listBd:string[]) => {
     const res = await request.post('/bd/delete', {listBd: listBd});
     return res;
 }
+

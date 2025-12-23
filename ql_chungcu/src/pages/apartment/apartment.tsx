@@ -5,7 +5,7 @@ import {toast} from "sonner";
 import {Button} from "@/components/ui/button.tsx";
 import {Label} from "@radix-ui/react-dropdown-menu";
 import {Input} from "@/components/ui/input.tsx";
-import {RotateCw} from "lucide-react";
+import {ChevronDown, RotateCw, Upload} from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -18,13 +18,17 @@ import {
 import AptForm, {type AptFormSchema} from "@/pages/apartment/action-form-apt.tsx";
 import type {bdItemCheckbox, Building} from "@/types/Building.ts";
 import {getAllBdAPI} from "@/apis/bdAPI.ts";
-import {createAptAPI, getApartmentByBuilding, updateAptAPI} from "@/apis/aptAPI.ts";
+import {createAptAPI, createAptUseFileAPI, getApartmentByBuilding, updateAptAPI} from "@/apis/aptAPI.ts";
 import {DataTable} from "@/layouts/tables/data-table.tsx";
 import {ColumnsApt} from "@/layouts/columns/column-tb-apt.tsx";
 import type {fillItemApt} from "@/types/Apartment.ts";
 import {columnLabelsApt} from "@/utils/column-label.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
 import {findByIdAPI} from "@/apis/orgAPI.ts";
+import {ExcelImportDialog} from "@/layouts/excel/ExcelImportDialog.tsx";
+import {APT_RES_TEMPLATE, APT_RES_VALIDATION_RULES} from "@/layouts/excel/templates/apt_res-template.ts";
+import {APARTMENT_TEMPLATE, APARTMENT_VALIDATION_RULES} from "@/layouts/excel/templates/apartment-template.ts";
+import {createAptResUseFileAPI} from "@/apis/resAPI.ts";
 
 function Apartment() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -39,6 +43,10 @@ function Apartment() {
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
+
+    // excel
+    const [importApartmentDialogOpen, setImportApartmentDialogOpen] =
+        useState(false);
     const {orgManage} = useContext(AuthContext);
 
     //Lay tat ca cac phong ban
@@ -121,11 +129,29 @@ function Apartment() {
         }
     }
 
+    const handleImportApt = async (file: File) => {
+        try {
+            // Tạo FormData để gửi file
+            const formData = new FormData();
+            formData.append("files", file);
+
+            // Call API - GỬI FILE
+            await createAptUseFileAPI(formData);
+            toast.success("Nhập dữ liệu căn hộ thành công!");
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-wrap items-center justify-end gap-2 md:flex-row">
                 <Button className="hover: cursor-pointer" onClick={handleCreate}>Thêm mới</Button>
-
+                <Button className="gap-2 bg-green-800 hover:bg-green-900"
+                        onClick={() => setImportApartmentDialogOpen(true)}>
+                    <Upload className="h-4 w-4"/>
+                    Nhập Excel
+                </Button>
                 <AptForm open={openDialog}
                          setOpen={setOpenDialog}
                          loading={loading}
@@ -168,6 +194,17 @@ function Apartment() {
                            keyword={debouncedKeyword} rowSelection={rowSelection} setRowSelection={setRowSelection}
                            handleDelete={handleDelete}/>
             </div>
+
+            <ExcelImportDialog
+                open={importApartmentDialogOpen}
+                onOpenChange={setImportApartmentDialogOpen}
+                template={APARTMENT_TEMPLATE}
+                validationRules={APARTMENT_VALIDATION_RULES}
+                duplicateFields={[]}
+                onImport={handleImportApt}
+                title="Nhập danh sách căn hộ"
+                description="Tải file mẫu để nhập thông tin căn hộ"
+            />
         </>
     )
 }

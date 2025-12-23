@@ -21,10 +21,11 @@ export const columnLabelsApt: Record<string, string> = {
     apt_area: "Diện tích",
     apt_type: "Loại căn hộ",
     description: "Mô tả",
+    floor: "Tầng",
 }
 
 export const columnLabelsRes: Record<string, string> = {
-    res_id:"Mã cư dân",
+    relationship:"Quan hệ",
     cccd: "Số căn cước",
     fullname: "Cư dân",
     email: "Email",

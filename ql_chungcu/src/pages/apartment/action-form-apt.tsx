@@ -26,7 +26,8 @@ const schema = z.object({
     apt_area: z.number().optional(),
     apt_type: z.string().optional(),
     building_id: z.string().optional(),
-    description: z.string().optional()
+    description: z.string().optional(),
+    floor: z.number().optional(),
 })
 
 export type AptFormSchema = z.infer<typeof schema>
@@ -53,6 +54,7 @@ export default function AptForm({open, setOpen, loading, action, formData, items
         defaultValues: {
             apt_number: formData?.apt_number || "",
             apt_area: formData?.apt_area || 1, // Giả sử diện tích mặc định là 1
+            floor: formData?.floor || 1,
             description: formData?.description || "",
             apt_type: formData?.apt_type || "",
             building_id: formData?.building_id || "",
@@ -64,6 +66,7 @@ export default function AptForm({open, setOpen, loading, action, formData, items
             reset({
                 apt_number: formData.apt_number || "",
                 apt_area: formData.apt_area || 1,
+                floor: formData.floor || 1,
                 description: formData.description || "",
                 apt_type: formData?.apt_type || "",
                 building_id: formData?.building_id || "",
@@ -101,11 +104,23 @@ export default function AptForm({open, setOpen, loading, action, formData, items
                             {/* Số căn hộ */}
                             <div className="grid gap-3">
                                 <Label htmlFor="apt_number">Số căn hộ</Label>
-                                <Input id="apt_number" {...register("apt_number")} />
+                                <Input id="apt_number" {...register("apt_number", {
+                                    setValueAs: (value) => value?.trim()
+                                })} />
                                 {errors.apt_number &&
                                     <p className="text-sm text-red-500">{errors.apt_number.message}</p>}
 
                             </div>
+                            {/* Tầng */}
+                            <div className="grid gap-3">
+                                <Label htmlFor="floor">Tầng</Label>
+                                <Input id="floor" {...register("floor", {valueAsNumber: true})} type="number"
+                                       min="1" max="100"
+                                       step="1"/>
+                                {errors.floor &&
+                                    <p className="text-sm text-red-500">{errors.floor.message}</p>}
+                            </div>
+
 
                             {/* Diện tích căn hộ */}
                             <div className="grid gap-3">
@@ -121,14 +136,17 @@ export default function AptForm({open, setOpen, loading, action, formData, items
                             {/* Mô tả */}
                             <div className="grid gap-3">
                                 <Label htmlFor="description">Mô tả</Label>
-                                <Input id="description" {...register("description")} />
+                                <Input id="description" {...register("description", {
+                                    setValueAs: (value) => value?.trim()
+                                })} />
                             </div>
 
 
-                            {/* Mô tả */}
                             <div className="grid gap-3">
                                 <Label htmlFor="apt_type">Loại căn hộ</Label>
-                                <Input id="apt_type" {...register("apt_type")} />
+                                <Input id="apt_type" {...register("apt_type", {
+                                    setValueAs: (value) => value?.trim()
+                                })} />
                             </div>
 
                             <div className="grid gap-3">

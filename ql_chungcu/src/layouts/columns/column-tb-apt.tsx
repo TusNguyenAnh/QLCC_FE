@@ -63,6 +63,16 @@ export const ColumnsApt = ({handleUpdate, handleDelete}: ComponentProps): Column
         ),
     },
     {
+        accessorKey: 'floor',
+        header: ({column}) => (
+            <DataTableColumnHeader column={column} title="Tầng"/>
+        ),
+        cell: ({row}) => (
+            <div>{row.getValue('floor')}</div>
+        ),
+    },
+
+    {
         accessorKey: 'apt_area',
         header: ({column}) => (
             <DataTableColumnHeader column={column} title="Diện tích"/>
