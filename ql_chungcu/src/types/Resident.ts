@@ -2,7 +2,6 @@ export type Resident = {
     id: string,
     org_id: string,
     apt_id: string,
-    res_id: string,
     fullname : string,
     email : string,
     phone_number :string,

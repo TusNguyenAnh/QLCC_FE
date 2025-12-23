@@ -52,16 +52,6 @@ export const ColumnsRes = ({handleUpdate, handleDelete}: ComponentProps): Column
         ),
     },
 
-    {
-        accessorKey: 'res_id',
-        header: ({column}) => (
-            <DataTableColumnHeader column={column} title="Mã cư dân"/>
-        ),
-
-        cell: ({row}) => (
-            <div>{row.getValue('res_id')}</div>
-        ),
-    },
 
     {
         accessorKey: 'cccd',
@@ -120,7 +110,18 @@ export const ColumnsRes = ({handleUpdate, handleDelete}: ComponentProps): Column
             <DataTableColumnHeader column={column} title="Giới tính"/>
         ),
         cell: ({row}) => (
-            <div>{row.getValue('gender')}</div>
+            <div>{row.getValue('gender') == 0 ? 'Nam' : 'Nữ'}</div>
+        ),
+    },
+
+    {
+        accessorKey: 'relationship',
+        header: ({column}) => (
+            <DataTableColumnHeader column={column} title="Quan hệ"/>
+        ),
+
+        cell: ({row}) => (
+            <div>{row.getValue('relationship')}</div>
         ),
     },
 
