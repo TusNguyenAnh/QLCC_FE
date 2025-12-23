@@ -91,7 +91,8 @@ export default function RoleForm({open, setOpen, loading, action, formData, onSu
                         <div className="grid gap-4">
                             <div className="grid gap-3">
                                 <Label htmlFor="building_name">Tên vai trò</Label>
-                                <Input id="role_name" {...register("role_name")} />
+                                <Input id="role_name" {...register("role_name", {
+                                    setValueAs: (value) => value?.trim()})} />
                                 {errors.role_name &&
                                     <p className="text-sm text-red-500">{errors.role_name.message}</p>}
 
@@ -99,7 +100,8 @@ export default function RoleForm({open, setOpen, loading, action, formData, onSu
 
                             <div className="grid gap-3">
                                 <Label htmlFor="description">Mô tả</Label>
-                                <Input id="description" {...register("description")} />
+                                <Input id="description" {...register("description", {
+                                    setValueAs: (value) => value?.trim()})} />
                             </div>
                         </div>
                     </div>

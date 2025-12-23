@@ -169,7 +169,9 @@ export const RegisterService: React.FC = () => {
                                             Tên chung cư <span className="text-red-500">*</span>
                                         </Label>
 
-                                        <Input id="complex_name" {...register("complex_name")}
+                                        <Input id="complex_name" {...register("complex_name", {
+                                            setValueAs: (value) => value?.trim()
+                                        })}
                                                placeholder="Ví dụ: Chung cư Vinhomes Central Park"
                                                autoComplete="complex_name" className="h-11"
                                         />
@@ -183,7 +185,9 @@ export const RegisterService: React.FC = () => {
                                             <MapPin className="inline mr-2 h-4 w-4"/>
                                             Địa chỉ <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input id="address" {...register("address")}
+                                        <Input id="address" {...register("address", {
+                                            setValueAs: (value) => value?.trim()
+                                        })}
                                                placeholder="Số nhà, đường, phường, quận, thành phố"
                                                autoComplete="address" className="h-11"
                                         />
@@ -234,7 +238,9 @@ export const RegisterService: React.FC = () => {
                                             <User className="inline mr-2 h-4 w-4"/>
                                             Họ và tên <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input id="name_contact" {...register("name_contact")}
+                                        <Input id="name_contact" {...register("name_contact", {
+                                            setValueAs: (value) => value?.trim()
+                                        })}
                                                placeholder="Nguyễn Văn A"
                                                autoComplete="name_contact" className="h-11"
                                         />
@@ -247,7 +253,9 @@ export const RegisterService: React.FC = () => {
                                             <Phone className="inline mr-2 h-4 w-4"/>
                                             Số điện thoại <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input id="phone_contact" {...register("phone_contact")}
+                                        <Input id="phone_contact" {...register("phone_contact", {
+                                            setValueAs: (value) => value?.trim()
+                                        })}
                                                placeholder="0912345678"
                                                autoComplete="phone_contact" className="h-11"
                                         />
@@ -260,7 +268,9 @@ export const RegisterService: React.FC = () => {
                                             <Mail className="inline mr-2 h-4 w-4"/>
                                             Email <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input id="email_contact" {...register("email_contact")}
+                                        <Input id="email_contact" {...register("email_contact", {
+                                            setValueAs: (value) => value?.trim()
+                                        })}
                                                type="email"
                                                placeholder="example@email.com"
                                                autoComplete="email_contact" className="h-11"
@@ -278,7 +288,9 @@ export const RegisterService: React.FC = () => {
                                 </Label>
                                 <Textarea
                                     id="description"
-                                    {...register("description")}
+                                    {...register("description", {
+                                        setValueAs: (value) => value?.trim()
+                                    })}
                                     placeholder="Mô tả thêm về chung cư hoặc yêu cầu đặc biệt..."
                                     rows={4}
                                     className="resize-none"

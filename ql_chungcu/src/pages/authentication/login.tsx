@@ -122,7 +122,9 @@ export function Login() {
 
                                 <Input
                                     id="username"
-                                    {...register("username")}
+                                    {...register("username", {
+                                        setValueAs: (value) => value?.trim()
+                                    })}
                                     autoComplete="username"
                                 />
                                 {errors.username && (
@@ -144,7 +146,9 @@ export function Login() {
                                 </div>
                                 <Input
                                     id="password"
-                                    {...register("password")}
+                                    {...register("password", {
+                                        setValueAs: (value) => value?.trim()
+                                    })}
                                     type="password"
                                     autoComplete="current-password"
                                 />

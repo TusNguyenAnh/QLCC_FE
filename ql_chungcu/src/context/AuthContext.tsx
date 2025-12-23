@@ -40,7 +40,7 @@ export default function AuthProvider({ children }: ComponentProps) {
   const [complex, setComplex] = useState<any | null>(null);
   const [orgManage, setOrgManage] = useState<any | null>(null);
   const [permissions, setPermissions] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // ✅ Bắt đầu với true để check token
+  const [loading, setLoading] = useState<boolean>(true); //  Bắt đầu với true để check token
 
   const checkPermission = React.useCallback(
     (permission: string) => permissions.includes(permission),
@@ -89,12 +89,12 @@ export default function AuthProvider({ children }: ComponentProps) {
   useEffect(() => {
     const token = getToken();
     if (token) {
-      fetchUser(); // ✅ Chỉ fetch user nếu có token
+      fetchUser(); // Chỉ fetch user nếu có token
     } else {
-      setLoading(false); // ✅ Không có token thì set loading = false
+      setLoading(false); // Không có token thì set loading = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // ✅ Chỉ chạy 1 lần khi mount
+  }, []); //  Chỉ chạy 1 lần khi mount
 
   // Memoize context value để tránh re-render không cần thiết
   const contextValue = React.useMemo(

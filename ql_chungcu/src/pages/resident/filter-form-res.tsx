@@ -146,17 +146,9 @@ export default function FilterResForm({onSubmit}: ComponentProps) {
                     >
                         Số căn hộ
                     </Label>
-                    <Controller
-                        control={control}
-                        name="apt_number"
-                        render={({field}) => (
-                            <Input
-                                {...field}
-                                type="text"
-                                placeholder="Nhập số căn hộ"
-                                className="w-full"
-                            />
-                        )}
+                    <Input id="apt_number" {...register("apt_number", {
+                        setValueAs: (v) => (v == 0 ? "" : v)
+                    })}
                     />
                 </div>
 

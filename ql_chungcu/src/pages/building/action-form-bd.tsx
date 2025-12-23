@@ -90,7 +90,8 @@ export default function BdForm({open, setOpen, loading, action, formData, onSubm
                         <div className="grid gap-4">
                             <div className="grid gap-3">
                                 <Label htmlFor="building_name">Tên tòa nhà</Label>
-                                <Input id="building_name" {...register("building_name")} />
+                                <Input id="building_name" {...register("building_name", {
+                                    setValueAs: (value) => value?.trim()})} />
                                 {errors.building_name &&
                                     <p className="text-sm text-red-500">{errors.building_name.message}</p>}
 
@@ -98,7 +99,8 @@ export default function BdForm({open, setOpen, loading, action, formData, onSubm
 
                             <div className="grid gap-3">
                                 <Label htmlFor="address">Địa chỉ</Label>
-                                <Input id="address" {...register("address")} />
+                                <Input id="address" {...register("address", {
+                                    setValueAs: (value) => value?.trim()})} />
                             </div>
                         </div>
                     </div>

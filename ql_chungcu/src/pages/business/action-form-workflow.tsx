@@ -187,7 +187,8 @@ export default function WorkflowForm({
                                     </div>
                                 </div>
                                 <Input
-                                    id="workflow_name" {...register("workflow_name")}
+                                    id="workflow_name" {...register("workflow_name", {
+                                    setValueAs: (value) => value?.trim()})}
                                 />
                                 {errors.workflow_name &&
                                     <p className="text-sm text-red-500">{errors.workflow_name.message}</p>}
@@ -195,7 +196,8 @@ export default function WorkflowForm({
 
                             <div className="grid gap-3">
                                 <Label htmlFor="description">Mô tả</Label>
-                                <Input id="description" {...register("description")} />
+                                <Input id="description" {...register("description", {
+                                    setValueAs: (value) => value?.trim()})} />
                             </div>
 
                             <div className="flex items-center justify-between">
@@ -237,7 +239,8 @@ export default function WorkflowForm({
                                         <div>
                                             <Label className="mb-2">Mô tả</Label>
                                             <Textarea
-                                                {...register(`workflow_step.${index}.description`)}
+                                                {...register(`workflow_step.${index}.description`, {
+                                                    setValueAs: (value) => value?.trim()})}
                                                 defaultValue={field.description}
                                                 placeholder="Mô tả"
                                             />

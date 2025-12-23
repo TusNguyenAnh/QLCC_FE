@@ -87,7 +87,7 @@ export default function OrgForm({
         building: formData.building || [],
       });
 
-      // ✅ Chỉ gọi API khi parent_org_id có giá trị
+      // Chỉ gọi API khi parent_org_id có giá trị
       if (formData.parent_org_id) {
         getBdIdByOrgId(
           complex,
@@ -96,13 +96,13 @@ export default function OrgForm({
           formData.building
         );
       } else {
-        // ✅ Reset danh sách tòa nhà khi không có parent_org_id (trường hợp CREATE)
+        // Reset danh sách tòa nhà khi không có parent_org_id (trường hợp CREATE)
         setItemsBd([]);
       }
     }
   }, [formData, reset]);
 
-  // ✅ Reset form và danh sách tòa nhà khi đóng popup
+  // Reset form và danh sách tòa nhà khi đóng popup
   useEffect(() => {
     if (!open) {
       reset({
@@ -170,7 +170,8 @@ export default function OrgForm({
               {/* Mã đơn vị */}
               <div className="grid gap-3">
                 <Label htmlFor="org_code">Mã đơn vị</Label>
-                <Input id="org_code" {...register("org_code")} />
+                <Input id="org_code" {...register("org_code", {
+                    setValueAs: (value) => value?.trim()})} />
                 {errors.org_code && (
                   <p className="text-sm text-red-500">
                     {errors.org_code.message}
@@ -181,7 +182,8 @@ export default function OrgForm({
               {/* Tên đơn vị */}
               <div className="grid gap-3">
                 <Label htmlFor="org_name">Tên đơn vị</Label>
-                <Input id="org_name" {...register("org_name")} />
+                <Input id="org_name" {...register("org_name", {
+                    setValueAs: (value) => value?.trim()})} />
                 {errors.org_name && (
                   <p className="text-sm text-red-500">
                     {errors.org_name.message}
@@ -192,7 +194,8 @@ export default function OrgForm({
               {/* Mô tả */}
               <div className="grid gap-3">
                 <Label htmlFor="description">Mô tả</Label>
-                <Input id="description" {...register("description")} />
+                <Input id="description" {...register("description", {
+                    setValueAs: (value) => value?.trim()})} />
               </div>
 
               {/* Combobox - Đơn vị cha */}
