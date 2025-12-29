@@ -42,6 +42,15 @@ export default function Header() {
         bsn: 'Quản lý quy trình',
         reply: 'Xử lý yêu cầu',
         authori: 'Quản lý truy cập',
+        role: 'Quản lý vai trò',
+        permission: 'Quản lý quyền hạn',
+        user: 'Quản lý người dùng',
+        finance: 'Quản lý tài chính',
+        revenue: 'Quản lý thu',
+        expense: 'Quản lý chi',
+        report: 'Báo cáo',
+        settings: 'Cài đặt',
+        cash: 'Sổ quỹ tiền mặt',
     };
 
     // Hàm tạo mảng breadcrumb từ URL

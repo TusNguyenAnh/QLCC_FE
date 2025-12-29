@@ -8,7 +8,7 @@ export const RESIDENT_TEMPLATE: ExcelTemplate = {
     headerRow: 4,
     instructions: [
         "📋 HƯỚNG DẪN NHẬP THÔNG TIN CƯ DÂN",
-        "⚠️ LƯU Ý: KHÔNG được thay đổi cấu trúc file này. Chỉ nhập dữ liệu từ dòng thứ 5 trở đi.",
+        "⚠️ LƯU Ý: KHÔNG được thay đổi cấu trúc file này. Định dạng dữ liệu nhập là text, chỉ nhập dữ liệu từ dòng thứ 5 trở đi.",
         "✅ Các trường có dấu (*) là BẮT BUỘC. CCCD,Email và SĐT phải là DUY NHẤT nếu nhập.",
     ],
     headers: [

@@ -19,13 +19,13 @@ const schema = z.object({
     apt_number: z.string().optional(),
 });
 
-export type FilterResFormSchema = z.infer<typeof schema>;
+export type FilterResUserFormSchema = z.infer<typeof schema>;
 
 type ComponentProps = {
-    onSubmit?: (filterRes: FilterResFormSchema) => void;
+    onSubmit?: (filterResUser: FilterResUserFormSchema) => void;
     loading?: boolean;
 };
-export default function FilterResForm({onSubmit}: ComponentProps) {
+export default function FilterUserResForm({onSubmit}: ComponentProps) {
     const {
         register,
         watch,
@@ -34,7 +34,7 @@ export default function FilterResForm({onSubmit}: ComponentProps) {
         setValue,
         control,
         formState: {errors},
-    } = useForm<FilterResFormSchema>({
+    } = useForm<FilterResUserFormSchema>({
         resolver: zodResolver(schema),
         defaultValues: {
             building_id: "",
@@ -56,7 +56,6 @@ export default function FilterResForm({onSubmit}: ComponentProps) {
     useEffect(() => {
         getAllBuilding();
     }, []);
-
 
     const getAllBuilding = async () => {
         try {

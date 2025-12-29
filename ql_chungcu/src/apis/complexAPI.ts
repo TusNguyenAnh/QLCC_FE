@@ -8,3 +8,8 @@ export const createComplexAPI = async (formData: FormData) => {
     });
     return res;
 };
+
+export const findByIdAPI = async (complexId: string) => {
+    const res = await request.get(`/complex/findById/${complexId}`);
+    return res.data;
+}

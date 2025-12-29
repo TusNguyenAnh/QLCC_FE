@@ -35,6 +35,10 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
 
+interface CusItem<TData> {
+    show?: boolean
+    onClick?: (rows: TData[]) => void
+}
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -45,6 +49,7 @@ interface DataTableProps<TData, TValue> {
     rowSelection: any,
     setRowSelection: any
     handleDelete?: (listItem: string[]) => void
+    cusItem?: Record<string, CusItem<TData>>
 }
 
 export function DataTable<TData, TValue>
@@ -57,6 +62,7 @@ export function DataTable<TData, TValue>
         rowSelection,
         setRowSelection,
         handleDelete,
+        cusItem,
     }: DataTableProps<TData, TValue>
 ) {
     const isMobile = useIsMobile();
@@ -92,6 +98,8 @@ export function DataTable<TData, TValue>
     }, [keyword])
 
     const ids = table.getSelectedRowModel().rows.map((r) => r.original.id)
+    const resCreateAcc = table.getSelectedRowModel().rows.map((r) => r.original)
+
 
     return (
         <div>
@@ -103,6 +111,12 @@ export function DataTable<TData, TValue>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="start">
                             <DropdownMenuItem onClick={() => handleDelete(ids)}>Ngưng hoạt động</DropdownMenuItem>
+                            {cusItem && cusItem['creatAcc']?.show == true ?
+                                <DropdownMenuItem
+                                    onClick={() => cusItem['creatAcc'].onClick ? cusItem['creatAcc'].onClick(resCreateAcc) : null}>
+                                    Cấp tài khoản
+                                </DropdownMenuItem> : null
+                            }
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -145,7 +159,7 @@ export function DataTable<TData, TValue>
                                             'hover:bg-gray-50',
                                             isMobile ? 'text-sm' : 'text-base',
                                             // row.depth > 0 && 'bg-gray-50', // Sub-row có nền nhạt hơn
-                                            row.original.status != "0" ? "bg-gray-100 text-gray-400 pointer-events-none" : ""
+                                            (row.original.status && row.original.status != "0") ? "bg-gray-100 text-gray-400 pointer-events-none" : ""
                                         )}
                                     >
                                         {row.getVisibleCells().map((cell) => (

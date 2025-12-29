@@ -15,14 +15,19 @@ import type {ColumnDef} from "@tanstack/react-table"
 import type {Building, fillItemBd} from "@/types/Building.ts";
 import type {Resident} from "@/types/Resident.ts";
 
+interface CusItem<TData> {
+    show?: boolean
+    onClick?: (rows: TData[]) => void
+}
+
 interface ComponentProps {
     handleUpdate: (org: fillItemBd) => void
     handleDelete: (listBd: string[]) => void
-
+    cusItem?: Record<string, CusItem<Resident>>
 }
 
 //Cột là nơi bạn xác định cốt lõi của bảng trông như thế nào. Chúng xác định dữ liệu sẽ được hiển thị, cách định dạng, sắp xếp và lọc dữ liệu.
-export const ColumnsRes = ({handleUpdate, handleDelete}: ComponentProps): ColumnDef<Resident>[] => [
+export const ColumnsRes = ({handleUpdate, handleDelete, cusItem}: ComponentProps): ColumnDef<Resident>[] => [
     {
         id: "select_all",
         header: ({table}) => {
@@ -129,7 +134,7 @@ export const ColumnsRes = ({handleUpdate, handleDelete}: ComponentProps): Column
         id: 'actions',
         enableHiding: false,
         cell: ({row}) => {
-            const bdItemUpdate = row.original
+            const resItemUpdate = row.original
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -141,16 +146,24 @@ export const ColumnsRes = ({handleUpdate, handleDelete}: ComponentProps): Column
 
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Chức năng</DropdownMenuLabel>
+                        <DropdownMenuSeparator/>
                         <DropdownMenuItem
-                            onClick={() => handleUpdate(bdItemUpdate)}
+                            onClick={() => handleUpdate(resItemUpdate)}
                         >
                             Sửa
                         </DropdownMenuItem>
+                        {cusItem && cusItem['creatAcc']?.show == true ?
+                            <DropdownMenuItem
+                                onClick={() => cusItem['creatAcc'].onClick ? cusItem['creatAcc'].onClick([resItemUpdate]) : null}>
+                                Cấp tài khoản
+                            </DropdownMenuItem> : null
+                        }
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem
-                            onClick={() => handleDelete([bdItemUpdate.id])}
+                            onClick={() => handleDelete([resItemUpdate.id])}
                         >
                             Ngưng hoạt động</DropdownMenuItem>
+
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

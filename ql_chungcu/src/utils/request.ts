@@ -35,7 +35,7 @@ request.interceptors.response.use(
 //             try {
 //                 const { data } = await api.post<{ accessToken: string }>("/auth/refresh");
 //                 localStorage.setItem("accessToken", data.accessToken);
-//                 originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+//                 originalRequest.headers.UserManagement = `Bearer ${data.accessToken}`;
 //                 return api(originalRequest);
 //             } catch {
 //                 localStorage.removeItem("accessToken");

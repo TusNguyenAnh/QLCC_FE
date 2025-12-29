@@ -69,7 +69,7 @@ export default function AuthProvider({ children }: ComponentProps) {
     setLoading(true);
     try {
       const profile = await getProfile();
-      if (profile.user.resident) {
+      if (profile.user.resident && profile.user.resident.org_id != null) {
         const org = await findByIdAPI(profile.user.resident.org_id);
         setOrgManage(org.id);
       }

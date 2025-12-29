@@ -8,7 +8,7 @@ export const APT_RES_TEMPLATE: ExcelTemplate = {
     headerRow: 4,
     instructions: [
         "📋 HƯỚNG DẪN NHẬP THÔNG TIN CƯ DÂN - CĂN HỘ",
-        "⚠️ LƯU Ý: KHÔNG thay đổi cấu trúc file. Nhập dữ liệu từ dòng thứ 5.",
+        "⚠️ LƯU Ý: KHÔNG được thay đổi cấu trúc file này. Định dạng dữ liệu nhập là text, chỉ nhập dữ liệu từ dòng thứ 5 trở đi.",
         "✅ Các trường có dấu (*) là BẮT BUỘC",
     ],
     headers: [

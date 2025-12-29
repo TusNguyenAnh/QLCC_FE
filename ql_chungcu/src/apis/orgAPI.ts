@@ -11,13 +11,17 @@ export const findByIdAPI = async (orgId: string) => {
     return res.data;
 }
 
-export const getBdIdByOrgIdAPI = async (complexId: string, parentId:string) => {
-    const res = await request.get(`org/getBdIdByOrgId/${complexId}/${parentId}`);
+export const getBdIdByOrgIdAPI = async (complexId: string, parentId: string) => {
+    const res = await request.get(`org/getBdIdByOrgId/${complexId}`, {
+        params: {
+            parentId: parentId,
+        },
+    });
     return res.data;
 }
 
 
-export const getAllOrgWithoutChildAPI = async (orgId: string, complexId:string) => {
+export const getAllOrgWithoutChildAPI = async (orgId: string, complexId: string) => {
     const res = await request.get(`/org/getAllWithoutChild/${orgId}/${complexId}`);
     return res.data;
 }
@@ -38,7 +42,7 @@ export const updateOrgAPI = async (updateOrg: OrgFormSchema, orgId: string) => {
     return res.data;
 }
 
-export const deleteOrgAPI = async (listOrg:string[]) => {
+export const deleteOrgAPI = async (listOrg: string[]) => {
     const res = await request.post('/org/delete', {listOrg: listOrg});
     return res;
 }

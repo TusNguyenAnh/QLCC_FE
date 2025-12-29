@@ -13,10 +13,12 @@ import Reply from "@/pages/replies/reply.tsx";
 import LandingPage from "@/pages/home/landing-page.tsx";
 import {RegisterService} from "@/pages/authentication/register-service.tsx";
 import NotFound from "@/layouts/not-found.tsx";
-import Authorization from "@/pages/authorization/authorization.tsx";
 import Revenue from "@/pages/finance/revenue/revenue.tsx";
 import Expense from "@/pages/finance/expense/expense.tsx";
 import CashReport from "@/pages/report/cash-report.tsx";
+import PermissionManagement from "@/pages/authorization/permission/permission-management.tsx";
+import {RoleManagement} from "@/pages/authorization/role/role-management.tsx";
+import UserManagement from "@/pages/authorization/user/user-management.tsx";
 
 const AppRouter: React.FC = () => (
     <Routes>
@@ -46,12 +48,32 @@ const AppRouter: React.FC = () => (
             }
         />
 
-        <Route path="/page/authori" element={
+        <Route path="/page/authori/role" element={
             <ProtectedRoute
-                permissions={["view:permission", "assign:permission", "manage:role", "view:role", "assign:role", "view:user", "manage:user"]}
+                permissions={["manage:role", "view:role", "assign:role"]}
                 requireAll={true}
             >
-                <MainLayout content={<Authorization/>}>
+                <MainLayout content={<RoleManagement/>}>
+                </MainLayout>
+            </ProtectedRoute>
+        }/>
+
+        <Route path="/page/authori/permission" element={
+            <ProtectedRoute
+                permissions={["view:permission", "assign:permission"]}
+                requireAll={true}
+            >
+                <MainLayout content={<PermissionManagement/>}>
+                </MainLayout>
+            </ProtectedRoute>
+        }/>
+
+        <Route path="/page/authori/user" element={
+            <ProtectedRoute
+                permissions={["view:user", "manage:user"]}
+                requireAll={true}
+            >
+                <MainLayout content={<UserManagement/>}>
                 </MainLayout>
             </ProtectedRoute>
         }/>

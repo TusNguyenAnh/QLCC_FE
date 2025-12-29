@@ -67,7 +67,7 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                             {/*gia tri default*/}
                             <CommandItem
                                 key="not_parent" // id
-                                value=""//name
+                                value="null"//name
                                 onSelect={(currentValue) => {
                                     setValue(currentValue)
                                     setOpenCommandList(false)
@@ -77,7 +77,7 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                                 <CheckIcon
                                     className={cn(
                                         "mr-2 h-4 w-4",
-                                        (value == "" || value == null) ? "opacity-100" : "opacity-0"
+                                        (value == "null") ? "opacity-100" : "opacity-0"
                                     )}
                                 />
                                 Không thuộc

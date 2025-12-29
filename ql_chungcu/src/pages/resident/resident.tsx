@@ -16,7 +16,7 @@ import {
 import {DataTable} from "@/layouts/tables/data-table.tsx";
 import type {fillItemBd} from "@/types/Building.ts";
 import {columnLabelsRes} from "@/utils/column-label.ts";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
 import {
     createBdAPI,
@@ -33,11 +33,8 @@ import {
 } from "@/apis/resAPI.ts";
 import type {Resident} from "@/types/Resident.ts";
 import {ColumnsRes} from "@/layouts/columns/column-tb-res.tsx";
-import {AuthContext} from "@/context/AuthContext.tsx";
 import {
-    downloadExcel,
     exportDataToExcel,
-    generateExcelTemplate,
     RESIDENT_TEMPLATE,
     RESIDENT_VALIDATION_RULES,
 } from "@/utils/excel";
@@ -47,12 +44,13 @@ import {
     APT_RES_VALIDATION_RULES,
 } from "@/layouts/excel/templates/apt_res-template.ts";
 import FilterResForm, {type FilterResFormSchema} from "@/pages/resident/filter-form-res.tsx";
+import {createUserAPI} from "@/apis/userAPI.ts";
 
 export function Resident() {
     const [openDialog, setOpenDialog] = useState(false);
 
     const [loading, setLoading] = useState(false);
-    const [resident, setResident] = useState<any[]>([]);
+    const [resident, setResident] = useState<[]>([]);
     const [resUpdate, setResUpdate] = useState({});
     const [action, setAction] = useState("CREATE");
     const [keyword, setKeyword] = useState("");
@@ -67,6 +65,19 @@ export function Resident() {
         importResidentApartmentDialogOpen,
         setImportResidentApartmentDialogOpen,
     ] = useState(false);
+
+    const cusItem = {
+        creatAcc: {
+            show: true,
+            onClick: (rows: any) => {
+                handleCreateUser(rows); // rows: Resident[]
+            },
+        },
+    }
+
+    useEffect(() => {
+        getResByFilter({building_id: "11853611-6c26-42d9-bf8d-17ef2f89d04c", apt_number: "", floor: ""});
+    }, []);
 
 
     const getResByFilter = async (filterRes: FilterResFormSchema) => {
@@ -131,12 +142,22 @@ export function Resident() {
         return `${day}/${month}/${year}`;
     };
 
+    const handleCreateUser = async (listRes: Resident[]) => {
+        try {
+            await createUserAPI(listRes);
+            toast.success("Cấp tài khoản cư dân thành công!");
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    };
+
     // xu ly khi nhan nut them moi
     const handleCreate = () => {
         setBdUpdate({complex_id: "1"}); // complex_id se lay trong localstorage hoac co the lay tu api
         setAction("CREATE");
         setOpenDialog(true);
     };
+
 
     // xu ly khi nhan nut sua
     const handleUpdate = (bdUpdate: fillItemBd): void => {
@@ -253,14 +274,15 @@ export function Resident() {
             </Collapsible>
 
             <div className="p-4 mt-4 border border-gray-300 rounded-xl">
-                <DataTable<Resident, any>
-                    columns={ColumnsRes({handleUpdate, handleDelete})}
+                <DataTable
+                    columns={ColumnsRes({handleUpdate, handleDelete, cusItem})}
                     data={resident}
                     handleDelete={handleDelete}
                     columnLabels={columnLabelsRes}
                     keyword={debouncedKeyword}
                     rowSelection={rowSelection}
                     setRowSelection={setRowSelection}
+                    cusItem={cusItem}
                 />
             </div>
 

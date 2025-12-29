@@ -44,6 +44,7 @@ const validateValue = (
 
         case "date": {
             const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
+            console.log(stringValue);
             if (!datePattern.test(stringValue)) {
                 return "Ngày phải có định dạng DD/MM/YYYY";
             }

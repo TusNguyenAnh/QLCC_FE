@@ -3,6 +3,7 @@ export const columnLabelsOrg: Record<string, string> = {
     org_code: "Mã đơn vị",
     org_name: "Tên đơn vị",
     description: "Mô tả",
+    building: "Quản trị tòa",
 }
 
 export const columnLabelsBd: Record<string, string> = {

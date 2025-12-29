@@ -56,7 +56,7 @@ export function Login() {
             const loginRes = await login(data);
             setToken(loginRes.access_token);
             const userInfo = await getProfile();
-            if (userInfo.user.resident) {
+            if (userInfo.user.resident && userInfo.user.resident.org_id != null) {
                 const org = await findByIdAPI(userInfo.user.resident.org_id);
                 setOrgManage(org.id);
             } else {
