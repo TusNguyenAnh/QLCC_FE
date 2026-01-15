@@ -16,7 +16,6 @@ import {
     SheetHeader,
     SheetTitle
 } from "@/components/ui/sheet.tsx";
-import type {fillItemBd} from "@/types/Building.ts";
 import {useEffect} from "react";
 
 
@@ -26,13 +25,14 @@ const schema = z.object({
     email: z.string().optional(),
     phone_number: z.string().optional(),
     org_id: z.string().optional(),
-    position: z.string().optional(),
+    role_id: z.string().optional(),
 })
 
 export type StaffFormSchema = z.infer<typeof schema>
 
 type ComponentProps = {
     items: any[]
+    positions: any[]
     onSubmit: (data: StaffFormSchema) => void
     open?: boolean;
     setOpen?: (open: boolean) => void;
@@ -40,7 +40,7 @@ type ComponentProps = {
     formData: any // bạn có thể định nghĩa rõ ràng kiểu dữ liệu nếu muốn
 }
 
-export default function StaffForm({open, setOpen, loading, items, onSubmit, formData}: ComponentProps) {
+export default function StaffForm({open, setOpen, loading, items, onSubmit, formData, positions}: ComponentProps) {
     const {
         register,
         handleSubmit,
@@ -53,7 +53,7 @@ export default function StaffForm({open, setOpen, loading, items, onSubmit, form
             fullname: "",
             email: "",
             phone_number: "",
-            position: "",
+            role_id: "",
             org_id: "",
         },
     })
@@ -64,7 +64,7 @@ export default function StaffForm({open, setOpen, loading, items, onSubmit, form
                 fullname: formData?.fullname || "",
                 email: formData?.email || "",
                 phone_number: formData?.phone_number || "",
-                position: formData?.position || "",
+                role_id: formData?.role_id || "",
                 org_id: formData?.building_name || "",
             })
         }
@@ -125,12 +125,18 @@ export default function StaffForm({open, setOpen, loading, items, onSubmit, form
 
 
                             <div className="grid gap-3">
-                                <Label htmlFor="position">Vị trí</Label>
-                                <Input id="position" {...register("position", {
-                                    setValueAs: (value) => value?.trim()
-                                })} />
-                                {errors.position &&
-                                    <p className="text-sm text-red-500">{errors.position.message}</p>}
+                                <Label htmlFor="role_id">Vị trí</Label>
+                                <Controller
+                                    control={control}
+                                    name="role_id"
+                                    render={({field}) => (
+                                        <Combobox
+                                            items={positions}
+                                            onChange={(value) => field.onChange(value)}
+                                            itemUpdate={""}
+                                        />
+                                    )}
+                                />
                             </div>
 
 

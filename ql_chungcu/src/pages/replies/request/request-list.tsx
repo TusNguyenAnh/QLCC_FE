@@ -78,14 +78,14 @@ export function RequestList({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge
-                      variant="outline"
-                      className={`${
-                        STATUS_COLORS[request.status]
-                      } border-0 font-medium`}
-                    >
-                      {request.status}
-                    </Badge>
+                    {/*<Badge*/}
+                    {/*  variant="outline"*/}
+                    {/*  className={`${*/}
+                    {/*    STATUS_COLORS[request.status]*/}
+                    {/*  } border-0 font-medium`}*/}
+                    {/*>*/}
+                    {/*  {request.status}*/}
+                    {/*</Badge>*/}
                     <Badge
                       variant="outline"
                       className={`border-slate-200 font-semibold ${
@@ -114,7 +114,7 @@ export function RequestList({
                         Cư dân
                       </div>
                       <div className="text-sm font-medium text-slate-900">
-                        {request.username}
+                        {request.fullname}
                       </div>
                     </div>
                   </div>

@@ -20,6 +20,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type {listMediaFile} from "@/types/MediaFile.ts";
 import {DataMedia} from "@/layouts/media/data-media.tsx";
 
@@ -30,6 +36,7 @@ interface RequestDetailsProps {
     onSubmit: (action: string, comment: string, taskId: string) => void;
     open: boolean;
     setOpen: (open: boolean) => void;
+    type: string;
 }
 
 export function RequestDetails({
@@ -39,6 +46,7 @@ export function RequestDetails({
                                    open,
                                    setOpen,
                                    mediaFiles,
+                                   type,
                                }: RequestDetailsProps) {
     const [comment, setComment] = useState("");
 
@@ -75,7 +83,7 @@ export function RequestDetails({
                                 <Badge variant="outline">{request.type_name}</Badge>
                                 {workflow && (
                                     <Badge variant="outline" className="text-xs">
-                                        {workflow[1].workflow_name}
+                                        {workflow[0].workflow_name}
                                     </Badge>
                                 )}
                             </div>
@@ -93,7 +101,7 @@ export function RequestDetails({
                                     <User className="h-4 w-4 text-muted-foreground"/>
                                     <div>
                                         <p className="text-sm text-muted-foreground">Người gửi</p>
-                                        <p className="font-medium">{request.username}</p>
+                                        <p className="font-medium">{request.fullname}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -149,63 +157,60 @@ export function RequestDetails({
                             )}
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center justify-between">
-                                <>
-                                    <div
-                                        className={`flex items-center w-full h-[16vh] justify-between`}
-                                    >
-                                        <div>
-                                            <div
-                                                className={`flex items-center justify-center w-12 h-12 rounded-full border-2 bg-background relative`}
-                                            >
-                                                <CheckCircle className="h-5 w-5 text-green-500"/>
-
-                                                <div className="mt-4 text-center absolute top-10">
-                                                    <div className="text-sm font-medium truncate">
-                                                        Gửi yêu cầu
-                                                    </div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        Cư dân
-                                                    </div>
+                            <div className="flex items-center justify-between pt-4">
+                                <TooltipProvider>
+                                    <div className={`flex items-center w-full justify-between`}>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div
+                                                    className="flex items-center justify-center w-12 h-12 rounded-full border-2 bg-background cursor-help">
+                                                    <CheckCircle className="h-5 w-5 text-green-500"/>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <div className="text-sm font-medium">Gửi yêu cầu</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    Cư dân
+                                                </div>
+                                            </TooltipContent>
+                                        </Tooltip>
                                         <div className={`flex-1 w-full h-0.5 bg-green-500`}/>
                                     </div>
 
                                     {workflow?.map((level, index) => (
                                         <div
                                             key={level.id}
-                                            className={`flex items-center w-full h-[18vh] justify-between`}
+                                            className={`flex items-center w-full justify-between`}
                                         >
-                                            <div>
-                                                <div
-                                                    className={`flex items-center justify-center w-12 h-12 rounded-full border-2 bg-background relative`}
-                                                >
-                                                    {level.action == STATUS["P"] &&
-                                                    level.level == request.level ? (
-                                                        <Clock className="h-5 w-5 text-blue-500 animate-pulse"/>
-                                                    ) : level.action == STATUS["R"] ? (
-                                                        <XCircle className="h-5 w-5 text-red-500"/>
-                                                    ) : level.action == STATUS["A"] ? (
-                                                        <CheckCircle className="h-5 w-5 text-green-500"/>
-                                                    ) : (
-                                                        <div
-                                                            className="w-5 h-5 rounded-full border-2 border-muted-foreground"/>
-                                                    )}
-
-                                                    <div className="mt-4 text-center absolute top-10">
-                                                        <div className="text-sm font-medium truncate">
-                                                            {level.level == -1
-                                                                ? "Gửi yêu cầu"
-                                                                : `Cấp ${level.level}`}
-                                                        </div>
-                                                        <div className="text-xs text-muted-foreground truncate">
-                                                            {level.org_name}
-                                                        </div>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <div
+                                                        className="flex items-center justify-center w-12 h-12 rounded-full border-2 bg-background cursor-help">
+                                                        {level.action == STATUS["P"] &&
+                                                        level.level == request.level ? (
+                                                            <Clock className="h-5 w-5 text-blue-500 animate-pulse"/>
+                                                        ) : level.action == STATUS["R"] ? (
+                                                            <XCircle className="h-5 w-5 text-red-500"/>
+                                                        ) : level.action == STATUS["A"] ? (
+                                                            <CheckCircle className="h-5 w-5 text-green-500"/>
+                                                        ) : (
+                                                            <div
+                                                                className="w-5 h-5 rounded-full border-2 border-muted-foreground"/>
+                                                        )}
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <div className="text-sm font-medium">
+                                                        {level.level == -1 ? "Gửi yêu cầu" : level.org_name}
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {level.role_name}
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {level.fullname}
+                                                    </div>
+                                                </TooltipContent>
+                                            </Tooltip>
                                             {index <= workflow?.length - 1 && (
                                                 <div
                                                     className={`flex-1 w-full h-0.5 ${
@@ -218,38 +223,35 @@ export function RequestDetails({
                                         </div>
                                     ))}
 
-                                    <div
-                                        className={`flex items-center w-full h-[16vh] justify-between flex-1`}
-                                    >
-                                        <div>
-                                            <div
-                                                className={`flex items-center justify-center w-12 h-12 rounded-full border-2 bg-background relative`}
-                                            >
-                                                {workflow &&
-                                                workflow[workflow.length - 1].action == STATUS["A"] ? (
-                                                    <CheckCircle className="h-5 w-5 text-green-500"/>
-                                                ) : (
-                                                    <div
-                                                        className="w-5 h-5 rounded-full border-2 border-muted-foreground"/>
-                                                )}
-
-                                                <div className="mt-4 text-center absolute top-10">
-                                                    <div className="text-sm font-medium truncate">
-                                                        Hoàn thành
-                                                    </div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        Thông qua xét duyệt
-                                                    </div>
+                                    <div className={`flex items-center w-full justify-between`}>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div
+                                                    className="flex items-center justify-center w-12 h-12 rounded-full border-2 bg-background cursor-help">
+                                                    {workflow &&
+                                                    workflow[workflow.length - 1].action ==
+                                                    STATUS["A"] ? (
+                                                        <CheckCircle className="h-5 w-5 text-green-500"/>
+                                                    ) : (
+                                                        <div
+                                                            className="w-5 h-5 rounded-full border-2 border-muted-foreground"/>
+                                                    )}
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <div className="text-sm font-medium">Hoàn thành</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    Thông qua xét duyệt
+                                                </div>
+                                            </TooltipContent>
+                                        </Tooltip>
                                     </div>
-                                </>
+                                </TooltipProvider>
                             </div>
                         </CardContent>
                     </Card>
 
-                    {request.status == STATUS["P"] && (
+                    {type == STATUS["P"] && (
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg">Xét duyệt yêu cầu</CardTitle>
@@ -267,7 +269,7 @@ export function RequestDetails({
                                     onChange={(e) => setComment(e.target.value)}
                                     rows={3}
                                 />
-                                {request.status == STATUS["P"] && (
+                                {type == STATUS["P"] && (
                                     <div className="flex gap-2">
                                         <Button
                                             onClick={() => onSubmit("APPROVED", comment, request.id)}
@@ -290,7 +292,7 @@ export function RequestDetails({
                     )}
 
                     {/*/!* Rejection Reason *!/*/}
-                    {request.status === STATUS["R"] && (
+                    {type === STATUS["R"] && (
                         <Card className="border-destructive gap-2">
                             <CardHeader>
                                 <CardTitle className="text-lg text-destructive">

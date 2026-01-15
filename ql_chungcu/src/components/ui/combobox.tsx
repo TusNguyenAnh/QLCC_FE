@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import {useEffect, useState} from "react";
 
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button";
 import {
     Command,
     CommandEmpty,
@@ -9,15 +9,15 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
-import {CheckIcon, ChevronsUpDownIcon} from "lucide-react"
+} from "@/components/ui/popover";
+import {CheckIcon, ChevronsUpDownIcon} from "lucide-react";
 
-import {cn} from "@/lib/utils"
+import {cn} from "@/lib/utils";
 
 type ComboboxItem = {
     label: string; // ten item
@@ -32,12 +32,11 @@ type ComboboxProps = {
 
 export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
     const [openCommandList, setOpenCommandList] = useState(false);
-    const [value, setValue] = useState("") // gia tri phan tu duoc chon trong combobox
+    const [value, setValue] = useState(""); // gia tri phan tu duoc chon trong combobox
 
     useEffect(() => {
-        setValue(itemUpdate)
-    }, [itemUpdate])
-
+        setValue(itemUpdate);
+    }, [itemUpdate]);
 
     return (
         <Popover open={openCommandList} onOpenChange={setOpenCommandList}>
@@ -54,10 +53,11 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent className="w-max p-0 transform: translate(826px, 402px)"
-                            onWheel={(e) => {
-                                e.stopPropagation()
-                            }}
+            <PopoverContent
+                className="w-max p-0 transform: translate(826px, 402px) z-[1000] pointer-events-auto"
+                onWheel={(e) => {
+                    e.stopPropagation();
+                }}
             >
                 <Command>
                     <CommandInput className="min-w-1/2" placeholder="Search item..."/>
@@ -67,17 +67,17 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                             {/*gia tri default*/}
                             <CommandItem
                                 key="not_parent" // id
-                                value="null"//name
+                                value="null" //name
                                 onSelect={(currentValue) => {
-                                    setValue(currentValue)
-                                    setOpenCommandList(false)
-                                    onChange("null")
+                                    setValue(currentValue);
+                                    setOpenCommandList(false);
+                                    onChange("null");
                                 }}
                             >
                                 <CheckIcon
                                     className={cn(
                                         "mr-2 h-4 w-4",
-                                        (value == "null") ? "opacity-100" : "opacity-0"
+                                        value == "null" ? "opacity-100" : "opacity-0"
                                     )}
                                 />
                                 Không thuộc
@@ -89,9 +89,9 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                                     value={item.label} //name
                                     onSelect={() => {
                                         // console.log(currentValue, value);
-                                        setValue(item.value)
-                                        setOpenCommandList(false)
-                                        onChange(item.value)
+                                        setValue(item.value);
+                                        setOpenCommandList(false);
+                                        onChange(item.value);
                                     }}
                                 >
                                     <CheckIcon
@@ -108,5 +108,5 @@ export function Combobox({items, onChange, itemUpdate}: ComboboxProps) {
                 </Command>
             </PopoverContent>
         </Popover>
-    )
+    );
 }

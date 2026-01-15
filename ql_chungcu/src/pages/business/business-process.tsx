@@ -21,6 +21,7 @@ import {ListWorkflow} from "@/pages/business/list-workflow.tsx";
 import type {listWorkflow} from "@/types/Workflow.ts";
 import DetailWorkflow from "@/pages/business/detail-workflow.tsx";
 import {AuthContext} from "@/context/AuthContext.tsx";
+import {getAllRoleAPI} from "@/apis/roleAPI.ts";
 
 interface ApprovalLevel {
     id: string
@@ -53,10 +54,13 @@ function BusinessProcess() {
     const [action, setAction] = useState("CREATE");
     const [loading, setLoading] = useState(false);
     const [listOrgLevel, setListOrgLevel] = useState([]);
+    const [listPosition, setListPosition] = useState([]);
+
     const {complex} = useContext(AuthContext);
 
     useEffect(() => {
         getAllWorkflow(complex);
+        getPosition(complex);
     }, [])
 
     const getTopLevel = async (complexId: string) => {
@@ -72,6 +76,22 @@ function BusinessProcess() {
                 });
             }
             setListOrgLevel(orgLevel);
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    }
+
+    const getPosition = async (complexId: string) => {
+        try {
+            const data = await getAllRoleAPI(complexId)
+
+            const items = data.map(function (item: { id: string; role_name: string }) {
+                return ({
+                    value: item.id,
+                    label: item.role_name,
+                });
+            });
+            setListPosition(items);
         } catch (err) {
             handleAxiosStatusCode(err);
         }
@@ -328,7 +348,9 @@ function BusinessProcess() {
 
             <WorkflowForm action={action} open={openDialog} setOpen={setOpenDialog}
                           onSubmit={submitCreateOrUpdate}
-                          formData={{}} itemsOrg={listOrgLevel}></WorkflowForm>
+                          formData={{}} itemsOrg={listOrgLevel}
+                          itemsPosition={listPosition}
+            ></WorkflowForm>
         </>
     )
 }

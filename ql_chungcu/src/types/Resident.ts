@@ -1,6 +1,6 @@
 export type Resident = {
     id: string,
-    org_id: string,
+    // org_id: string,
     apt_id: string,
     fullname : string,
     email : string,
@@ -10,7 +10,7 @@ export type Resident = {
     gender : string,
     cccd : string
     status?: string
-
+    // position?: string
 }
 
 export type fillItemBd = {

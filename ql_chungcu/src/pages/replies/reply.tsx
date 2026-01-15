@@ -23,6 +23,7 @@ import { DataPagination } from "@/layouts/pagination/data-pagination.tsx";
 import type { PaginationMeta } from "@/types/Pagination.ts";
 import type { listMediaFile } from "@/types/MediaFile.ts";
 import { getMediaFileAPI } from "@/apis/mediaFileAPI.ts";
+import {STATUS} from "@/utils/reply-constant.ts";
 
 function Reply() {
   const [selectedRequest, setSelectedRequest] = useState<Task | null>(null);
@@ -375,6 +376,7 @@ function Reply() {
                 mediaFiles={mediaFiles}
                 open={openReqDetail}
                 setOpen={setOpenReqDetail}
+                type={STATUS["P"]}
               />
             ) : null}
           </TabsContent>
@@ -407,6 +409,7 @@ function Reply() {
                 onSubmit={submitApproveOrReject}
                 open={openReqDetail}
                 setOpen={setOpenReqDetail}
+                type={STATUS["R"]}
               />
             ) : null}
           </TabsContent>
@@ -439,6 +442,7 @@ function Reply() {
                 workflow={workflowTask}
                 mediaFiles={mediaFiles}
                 onSubmit={submitApproveOrReject}
+                type={STATUS["A"]}
               />
             ) : null}
           </TabsContent>

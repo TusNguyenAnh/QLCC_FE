@@ -3,10 +3,8 @@ import {Button} from "@/components/ui/button"
 import {Loader2, RotateCw} from 'lucide-react'
 import {
     Sheet,
-    SheetClose,
     SheetContent,
     SheetDescription,
-    SheetFooter,
     SheetHeader,
     SheetTitle
 } from "@/components/ui/sheet.tsx";
@@ -17,12 +15,19 @@ import type {fillItemBd} from "@/types/Building.ts";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import type {Resident} from "@/types/Resident.ts";
 import {ColumnsRes} from "@/layouts/columns/column-tb-res.tsx";
-import {findByBuildingId, findByOrgId, updateResInOrg} from "@/apis/resAPI.ts";
+import {
+    addResInOrgAPI,
+    findByBuildingIdAPI,
+    findByOrgId,
+    removeResInOrgAPI,
+    updatePositionAPI
+} from "@/apis/resAPI.ts";
 import {toast} from "sonner";
 import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {Label} from "@radix-ui/react-dropdown-menu";
 import {Input} from "@/components/ui/input.tsx";
 import {useDebounce} from "use-debounce";
+import {ColumnsMem} from "@/layouts/columns/column-tb-mem.tsx";
 
 type ComponentProps = {
     action: string
@@ -41,20 +46,46 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
     const [loading, setLoading] = useState(false);
     const [tabValue, setTabValue] = useState("resident") // mặc định tab đầu tiên
     const [keyword, setKeyword] = useState("");
+    const [selectedPosition, setSelectedPosition] = useState(true);
     const [debouncedKeyword] = useDebounce(keyword, 500);
+
+    // const cusItem = {
+    //     updatePosition: {
+    //         show: true,
+    //         onClick: (rows: any) => {
+    //             const position = rows.position;
+    //             const userId = rows.row.id;
+    //             handleUpdatePostion(position, userId);
+    //         },
+    //     },
+    // }
 
     useEffect(() => {
         findByOrgId(orgIdManage).then(data => {
             setMember(data);
         })
-    }, [orgIdManage, tabValue])
+    }, [orgIdManage, tabValue, selectedPosition])
 
     useEffect(() => {
-        findByBuildingId(buildingIdManage).then(data => {
+        findByBuildingIdAPI(buildingIdManage, orgIdManage).then(data => {
             setResident(data);
         })
-    }, [buildingIdManage, tabValue])
+    }, [buildingIdManage, tabValue, orgIdManage])
 
+
+    // const handleUpdatePostion = async (position: string, userId: string) => {
+    //     setLoading(true);
+    //     try {
+    //         await updatePositionAPI(userId, orgIdManage, position);
+    //         console.log(userId, position, orgIdManage);
+    //         setSelectedPosition(!selectedPosition);
+    //         toast.success("Cập nhật vai trò thành công!");
+    //     } catch (err) {
+    //         handleAxiosStatusCode(err);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleUpdate = (orgUpdate: fillItemBd): void => { // nhan tham so la thong tin hang can update
     }
@@ -67,10 +98,10 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
         try {
             if (tabValue === "resident") {
                 // call api them thanh vien
-                await updateResInOrg(Object.keys(data), orgId);
+                await addResInOrgAPI(Object.keys(data), orgId);
             } else {
                 // call api xoa thanh vien
-                await updateResInOrg(Object.keys(data), 'null');
+                await removeResInOrgAPI(Object.keys(data), orgId);
             }
             toast.success(tabValue === "resident" ? "Thêm mới thành công!" : "Loại bỏ thành viên thành công!")
         } catch (err) {
@@ -115,40 +146,44 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
                                     <RotateCw className="hover: cursor-pointer" onClick={() => setKeyword("")}/>
                                 </div>
                             </div>
-                            <TabsContent value="resident" className="p-4 mx-4 border border-gray-300 rounded-xl">
-                                <DataTable<Resident, any> columns={ColumnsRes({handleUpdate, handleDelete})}
-                                                          data={resident}
-                                                          handleDelete={handleDelete}
-                                                          columnLabels={columnLabelsRes}
-                                                          keyword={debouncedKeyword}
-                                                          rowSelection={rowSelection}
-                                                          setRowSelection={setRowSelection}
-                                />
+                            <TabsContent value="resident">
+                                <div className="flex flex-col items-end h-[75vh] overflow-y-auto">
+                                    <Button type="button" className="w-fit mr-4"
+                                            onClick={() => submitCreateOrDeleteMember(rowSelection, orgIdManage)}> Cập
+                                        nhật
+                                    </Button>
+                                    <div className="p-4 m-4 border border-gray-300 rounded-xl">
+                                        <DataTable<Resident, any> columns={ColumnsRes({handleUpdate, handleDelete})}
+                                                                  data={resident}
+                                                                  handleDelete={handleDelete}
+                                                                  columnLabels={columnLabelsRes}
+                                                                  keyword={debouncedKeyword}
+                                                                  rowSelection={rowSelection}
+                                                                  setRowSelection={setRowSelection}
+                                        />
+                                    </div>
+                                </div>
                             </TabsContent>
-                            <TabsContent value="member">
-                                <div className="p-4 mx-4 border border-gray-300 rounded-xl">
-                                    <DataTable<Resident, any> columns={ColumnsRes({handleUpdate, handleDelete})}
-                                                              data={member}
-                                                              handleDelete={handleDelete}
-                                                              columnLabels={columnLabelsRes}
-                                                              keyword={debouncedKeyword}
-                                                              rowSelection={rowSelection}
-                                                              setRowSelection={setRowSelection}
-                                    />
+                            <TabsContent value="member" className="flex flex-col items-end">
+                                <div className="flex flex-col items-end h-[75vh] overflow-y-auto">
+                                    <Button type="button" className="w-fit mr-4"
+                                            onClick={() => submitCreateOrDeleteMember(rowSelection, orgIdManage)}> Cập
+                                        nhật
+                                    </Button>
+
+                                    <div className="p-4 m-4 border border-gray-300 rounded-xl">
+                                        <DataTable<Resident, any> columns={ColumnsRes({})}
+                                                                  data={member}
+                                                                  handleDelete={handleDelete}
+                                                                  columnLabels={columnLabelsRes}
+                                                                  keyword={debouncedKeyword}
+                                                                  rowSelection={rowSelection}
+                                                                  setRowSelection={setRowSelection}
+                                        />
+                                    </div>
                                 </div>
                             </TabsContent>
                         </Tabs>
-
-
-                        <SheetFooter className="mt-4 ">
-                            <Button type="button"
-                                    onClick={() => submitCreateOrDeleteMember(rowSelection, orgIdManage)}> Lưu
-                                thay đổi</Button>
-                            <SheetClose asChild>
-                                <Button type="button" variant="outline" onClick={() => {
-                                }}>Hủy</Button>
-                            </SheetClose>
-                        </SheetFooter>
                     </div>
                 </SheetContent>
             </Sheet>

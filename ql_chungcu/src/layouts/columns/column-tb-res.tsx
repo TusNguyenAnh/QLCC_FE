@@ -21,8 +21,8 @@ interface CusItem<TData> {
 }
 
 interface ComponentProps {
-    handleUpdate: (org: fillItemBd) => void
-    handleDelete: (listBd: string[]) => void
+    handleUpdate?: (org: fillItemBd) => void
+    handleDelete?: (listBd: string[]) => void
     cusItem?: Record<string, CusItem<Resident>>
 }
 

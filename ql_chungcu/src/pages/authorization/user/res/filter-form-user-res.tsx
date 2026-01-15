@@ -95,7 +95,7 @@ export default function FilterUserResForm({onSubmit}: ComponentProps) {
                 {/* Building Filter */}
                 <div className="flex-1 min-w-[200px]">
                     <Label
-                        htmlFor="building"
+                        htmlFor="building_id"
                         className="text-sm font-medium text-gray-700 mb-1.5 block"
                     >
                         Tòa nhà

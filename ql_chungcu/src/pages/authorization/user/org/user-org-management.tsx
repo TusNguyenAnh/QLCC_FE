@@ -37,11 +37,11 @@ function UserOrgManagement() {
     const [listOrgWithoutChild, setListOrgWithoutChild] = useState<
         orgWithoutChild[] | []
     >([]);
-    const [orgSelected, setOrgSelected] = useState<orgWithoutChild | null>(null);
+    const [orgSelected, setOrgSelected] = useState<orgWithoutChild>({id: "", org_name: ""});
     const [member, setMember] = useState<Member[]>([]);
     const [userId, setUserId] = useState("");
 
-    const [roleOfUser, setRoleOfUser] = useState<string[]>([]);
+    const [roleOfUser, setRoleOfUser] = useState("");
 
     const {complex} = useContext(AuthContext);
 
@@ -98,7 +98,7 @@ function UserOrgManagement() {
 
     const getRoleByUser = async (userId: string) => {
         try {
-            const data = await getRoleByUserAPI(userId);
+            const data = await getRoleByUserAPI(userId, {orgId: orgSelected?.id});
             setRoleOfUser(data);
         } catch (err) {
             handleAxiosStatusCode(err);
@@ -106,11 +106,11 @@ function UserOrgManagement() {
     };
 
     // // xu ly khi nhan nut sua
-    const handleUpdate = (userId: string): void => {
+    const handleUpdate = async (userId: string) => {
         // nhan tham so la thong tin hang can update
         console.log(userId);
         setUserId(userId);
-        getRoleByUser(userId);
+        await getRoleByUser(userId);
         setOpenDialog(true);
     };
 
@@ -178,8 +178,7 @@ function UserOrgManagement() {
                 onSubmit={assignRole}
                 open={openDialog}
                 setOpen={setOpenDialog}
-                loading={loading}
-            />
+                org_id={orgSelected.id}/>
         </>
     );
 }

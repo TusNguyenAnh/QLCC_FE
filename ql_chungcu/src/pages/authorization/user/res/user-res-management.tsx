@@ -12,11 +12,21 @@ import {DataTable} from "@/layouts/tables/data-table.tsx";
 import {ColumnsUser} from "@/layouts/columns/column-tb-user.tsx";
 import type {Member} from "@/types/User.ts";
 import {columnLabelsMem} from "@/utils/column-label.ts";
-import AssignRoleForm, {type AssignRoleFormSchema} from "@/pages/authorization/user/assign-role.tsx";
+import AssignRoleForm, {
+    type AssignRoleFormSchema,
+} from "@/pages/authorization/user/assign-role.tsx";
 import {toast} from "sonner";
-import {assignRoleAPI, getAllRoleAPI, getRoleByUserAPI} from "@/apis/roleAPI.ts";
+import {
+    assignRoleAPI,
+    getAllRoleAPI,
+    getRoleByUserAPI,
+} from "@/apis/roleAPI.ts";
 import type {RoleItem} from "@/types/Role.ts";
-import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible.tsx";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/components/ui/collapsible.tsx";
 import FilterResForm from "@/pages/resident/filter-form-res.tsx";
 import type {FilterResUserFormSchema} from "@/pages/authorization/user/res/filter-form-user-res.tsx";
 
@@ -27,10 +37,10 @@ function UserResManagement() {
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
 
-    const [roles, setRoles] = useState<RoleItem[]>([])
+    const [roles, setRoles] = useState<RoleItem[]>([]);
     const [member, setMember] = useState([]);
     const [userId, setUserId] = useState("");
-    const [roleOfUser, setRoleOfUser] = useState<string[]>([])
+    const [roleOfUser, setRoleOfUser] = useState<string>("");
     const [showFilter, setShowFilter] = useState(false);
 
     const {complex} = useContext(AuthContext);
@@ -38,8 +48,7 @@ function UserResManagement() {
     //Lay tat ca cac phong ban
     useEffect(() => {
         getAllRole(complex);
-
-    }, [])
+    }, []);
 
     const getUserByFilter = async (filterUser: FilterResUserFormSchema) => {
         try {
@@ -53,50 +62,54 @@ function UserResManagement() {
     const getAllRole = async (complexId: string) => {
         setLoading(true);
         try {
-            const data = await getAllRoleAPI(complexId)
-            setRoles(data)
+            const data = await getAllRoleAPI(complexId);
+            setRoles(data);
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const getRoleByUser = async (userId: string) => {
         try {
-            const data = await getRoleByUserAPI(userId)
-            setRoleOfUser(data)
+            const data = await getRoleByUserAPI(userId, {});
+            setRoleOfUser(data);
         } catch (err) {
             handleAxiosStatusCode(err);
         }
-    }
+    };
 
     // // xu ly khi nhan nut sua
-    const handleUpdate = (userId: string): void => { // nhan tham so la thong tin hang can update
-        console.log(userId)
-        setUserId(userId)
-        getRoleByUser(userId)
-        setOpenDialog(true)
-    }
+    const handleUpdate = async (userId: string) => {
+        // nhan tham so la thong tin hang can update
+        setUserId(userId);
+        await getRoleByUser(userId);
+        setOpenDialog(true);
+    };
 
     //
     const assignRole = async (data: AssignRoleFormSchema) => {
         setLoading(true);
         try {
-            console.log(data)
-            await assignRoleAPI(data)
-            toast.success("Cập nhật vai trò cho người dùng thành công!")
+            console.log(data);
+            await assignRoleAPI(data);
+            toast.success("Cập nhật vai trò cho người dùng thành công!");
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return (
         <>
             <div className="flex flex-wrap items-center justify-between md:flex-row">
-                <Collapsible open={showFilter} onOpenChange={setShowFilter} className="w-full">
+                <Collapsible
+                    open={showFilter}
+                    onOpenChange={setShowFilter}
+                    className="w-full"
+                >
                     <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
                         <CollapsibleTrigger asChild>
                             <Button
@@ -129,16 +142,16 @@ function UserResManagement() {
                         </div>
                     </CollapsibleContent>
                 </Collapsible>
-
             </div>
 
             <div className="p-4 border border-gray-300 rounded-xl">
-                <DataTable<Member, any> columns={ColumnsUser({handleUpdate})}
-                                        data={member}
-                                        columnLabels={columnLabelsMem}
-                                        keyword={debouncedKeyword}
-                                        rowSelection={rowSelection}
-                                        setRowSelection={setRowSelection}
+                <DataTable<Member, any>
+                    columns={ColumnsUser({handleUpdate})}
+                    data={member}
+                    columnLabels={columnLabelsMem}
+                    keyword={debouncedKeyword}
+                    rowSelection={rowSelection}
+                    setRowSelection={setRowSelection}
                 />
             </div>
 
@@ -150,9 +163,10 @@ function UserResManagement() {
                 open={openDialog}
                 setOpen={setOpenDialog}
                 loading={loading}
+                org_id={""}
             />
         </>
-    )
+    );
 }
 
 export default UserResManagement;

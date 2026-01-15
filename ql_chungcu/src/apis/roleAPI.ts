@@ -1,6 +1,5 @@
 import request from "@/utils/request.ts";
 import type {RoleFormSchema} from "@/pages/authorization/role/action-form-role.tsx";
-import type {AssignPermissionFormSchema} from "@/pages/authorization/role/assign-permission.tsx";
 import type {AssignRoleFormSchema} from "@/pages/authorization/user/assign-role.tsx";
 
 export const getAllRoleAPI = async (complexId: string) => {
@@ -13,8 +12,8 @@ export const createRoleAPI = async (newRole: RoleFormSchema) => {
     return res.data;
 }
 
-export const getRoleByUserAPI = async (userId: string) => {
-    const res = await request.get(`/role/getRoleByUserId/${userId}`);
+export const getRoleByUserAPI = async (userId: string, orgId: object) => {
+    const res = await request.post(`/role/getRoleByUserId/${userId}`, orgId);
     return res.data;
 }
 

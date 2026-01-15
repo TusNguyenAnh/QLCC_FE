@@ -148,6 +148,8 @@ export function Resident() {
             toast.success("Cấp tài khoản cư dân thành công!");
         } catch (err) {
             handleAxiosStatusCode(err);
+        } finally {
+            setRowSelection({});
         }
     };
 

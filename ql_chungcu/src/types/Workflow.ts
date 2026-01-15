@@ -17,6 +17,10 @@ export type WorkflowStep = {
     description: string;
     status?: number;
     workflow_id: string;
+    position: {
+        id: string;
+        role_name: string;
+    }[];
 }
 
 export type fillItemWf = {

@@ -73,9 +73,14 @@ function DetailWorkflow({selectedWorkflow}: ComponentProps) {
                                             <div className="flex items-center gap-4 text-sm">
                                                 <div className="flex items-center gap-1">
                                                     <Users className="h-4 w-4"/>
-                                                    <span>1 người</span>
+                                                    <span>{level.position.length}</span>
                                                 </div>
-                                                <div>Cần 1 phê duyệt</div>
+                                                <div>Cần: {level.position.map((pos:{id:string,role_name:string},index)=>{
+                                                    if(index == level.position.length -1){
+                                                        return pos.role_name + " ";
+                                                    }
+                                                    return pos.role_name + ", ";
+                                                })}phê duyệt</div>
                                             </div>
                                         </div>
                                     </div>

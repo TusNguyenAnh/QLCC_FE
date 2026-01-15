@@ -8,4 +8,10 @@ export type Complex = {
     name_contact: string;
     phone_contact: string;
     email_contact: string;
+    financial_model:string;
 };
+
+export type cplItemCheckbox = {
+    id: string;
+    complex_name: string;
+}

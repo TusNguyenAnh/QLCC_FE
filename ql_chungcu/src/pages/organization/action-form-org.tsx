@@ -170,8 +170,12 @@ export default function OrgForm({
               {/* Mã đơn vị */}
               <div className="grid gap-3">
                 <Label htmlFor="org_code">Mã đơn vị</Label>
-                <Input id="org_code" {...register("org_code", {
-                    setValueAs: (value) => value?.trim()})} />
+                <Input
+                  id="org_code"
+                  {...register("org_code", {
+                    setValueAs: (value) => value?.trim(),
+                  })}
+                />
                 {errors.org_code && (
                   <p className="text-sm text-red-500">
                     {errors.org_code.message}
@@ -182,8 +186,12 @@ export default function OrgForm({
               {/* Tên đơn vị */}
               <div className="grid gap-3">
                 <Label htmlFor="org_name">Tên đơn vị</Label>
-                <Input id="org_name" {...register("org_name", {
-                    setValueAs: (value) => value?.trim()})} />
+                <Input
+                  id="org_name"
+                  {...register("org_name", {
+                    setValueAs: (value) => value?.trim(),
+                  })}
+                />
                 {errors.org_name && (
                   <p className="text-sm text-red-500">
                     {errors.org_name.message}
@@ -194,8 +202,12 @@ export default function OrgForm({
               {/* Mô tả */}
               <div className="grid gap-3">
                 <Label htmlFor="description">Mô tả</Label>
-                <Input id="description" {...register("description", {
-                    setValueAs: (value) => value?.trim()})} />
+                <Input
+                  id="description"
+                  {...register("description", {
+                    setValueAs: (value) => value?.trim(),
+                  })}
+                />
               </div>
 
               {/* Combobox - Đơn vị cha */}
@@ -208,8 +220,9 @@ export default function OrgForm({
                     <Combobox
                       items={itemsOrg}
                       onChange={(value) => {
+                        console.log(value);
                         field.onChange(value);
-                        // ✅ Chỉ gọi API khi value có giá trị
+                        //  Chỉ gọi API khi value có giá trị
                         if (value) {
                           getBdIdByOrgId(
                             complex,
@@ -239,7 +252,6 @@ export default function OrgForm({
                       name="building"
                       render={({ field }) => {
                         const checked = !!field.value?.includes(itemBd.id);
-
                         return (
                           <div className="flex items-center space-x-2">
                             <Checkbox

@@ -11,21 +11,28 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import {useContext, useEffect, useState} from "react";
 import {toast, Toaster} from "sonner";
 import {Loader2} from "lucide-react";
 import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {getProfile, login} from "@/apis/authAPI.ts";
 import {useNavigate} from "react-router-dom";
-import {findByIdAPI} from "@/apis/orgAPI.ts";
+import {findByIdAPI, getAllOrgWithoutChildAPI} from "@/apis/orgAPI.ts";
 import {getPermissions, setToken} from "@/utils/auth.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
+import {Combobox} from "@/components/ui/combobox.tsx";
+import {filterComplexAPI, findComplexByIdAPI} from "@/apis/complexAPI.ts";
+import type {cplItemCheckbox} from "@/types/Complex.ts";
+import type {orgWithoutChild} from "@/types/Organization.ts";
 
 // Định nghĩa schema Zod
 const schema = z.object({
     username: z.string().min(1, "Tên đăng nhập không được để trống"),
-    password: z.string().optional(),
+    password: z.string().min(1, "Mật khẩu không được để trống"),
+    complex_id: z.string().min(1, "Chung cư không được để trống"),
+    org_id: z.string().optional(),
+
 });
 
 export type LoginFormSchema = z.infer<typeof schema>;
@@ -33,6 +40,7 @@ export type LoginFormSchema = z.infer<typeof schema>;
 export function Login() {
     const {
         register,
+        control,
         handleSubmit,
         formState: {errors},
     } = useForm<LoginFormSchema>({
@@ -40,12 +48,57 @@ export function Login() {
         defaultValues: {
             username: "",
             password: "",
+            complex_id: "",
+            org_id: ""
         },
     });
 
     const [loading, setLoading] = useState(false);
+    const [listComplex, setListComplex] = useState([]);
+    const [listOrgWithoutChild, setListOrgWithoutChild] = useState([]);
+
     const navigate = useNavigate();
-    const {user, setUser, setComplex, setOrgManage, setPermissions, clearAuth} = useContext(AuthContext);
+    const {
+        user,
+        setUser,
+        setComplex,
+        setOrgManage,
+        setPermissions,
+        clearAuth,
+        setFinanceModel
+    } = useContext(AuthContext);
+
+    const getAllComplex = async () => {
+        try {
+            const data = await filterComplexAPI("1");
+
+            const items = data.map(function (item: cplItemCheckbox) {
+                return ({
+                    value: item.id,
+                    label: item.complex_name,
+                });
+            });
+            setListComplex(items);
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    };
+
+    const getAllOrgWithoutChild = async (orgId: string, complexId: string) => {
+        try {
+            const data = await getAllOrgWithoutChildAPI(orgId, complexId);
+
+            const items = data.map(function (item: orgWithoutChild) {
+                return ({
+                    value: item.id,
+                    label: item.org_name,
+                });
+            });
+            setListOrgWithoutChild(items);
+        } catch (err) {
+            handleAxiosStatusCode(err);
+        }
+    }
 
     const onSubmit = async (data: LoginFormSchema) => {
         setLoading(true);
@@ -56,12 +109,14 @@ export function Login() {
             const loginRes = await login(data);
             setToken(loginRes.access_token);
             const userInfo = await getProfile();
-            if (userInfo.user.resident && userInfo.user.resident.org_id != null) {
-                const org = await findByIdAPI(userInfo.user.resident.org_id);
+            if (userInfo.org_id) {
+                const org = await findByIdAPI(userInfo.org_id);
                 setOrgManage(org.id);
             } else {
                 setOrgManage(null);
             }
+            const dataComplex = await findComplexByIdAPI(userInfo.user.complex_id);
+            setFinanceModel(dataComplex.financial_model);
             setUser(userInfo);
             setComplex(userInfo.user.complex_id);
 
@@ -77,6 +132,10 @@ export function Login() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        getAllComplex();
+    }, []);
 
     useEffect(() => {
         if (user) {
@@ -157,6 +216,44 @@ export function Login() {
                                         {errors.password.message}
                                     </p>
                                 )}
+                            </div>
+
+                            <div className="grid gap-3">
+                                <Label htmlFor="complex_id">Chung cư</Label>
+                                <Controller
+                                    control={control}
+                                    name="complex_id"
+                                    render={({field}) => (
+                                        <Combobox
+                                            items={listComplex}
+                                            onChange={(value) => {
+                                                field.onChange(value)
+                                                if (value) {
+                                                    getAllOrgWithoutChild('00000000-0000-0000-0000-000000000000', value);
+
+                                                } else {
+                                                    setListOrgWithoutChild([]); // Reset danh sách tòa nhà khi không chọn đơn vị cha
+                                                }
+                                            }}
+                                            itemUpdate={""}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="grid gap-3">
+                                <Label htmlFor="org_id">Trực thuộc</Label>
+                                <Controller
+                                    control={control}
+                                    name="org_id"
+                                    render={({field}) => (
+                                        <Combobox
+                                            items={listOrgWithoutChild}
+                                            onChange={(value) => field.onChange(value)}
+                                            itemUpdate={""}
+                                        />
+                                    )}
+                                />
                             </div>
                         </div>
                     </CardContent>

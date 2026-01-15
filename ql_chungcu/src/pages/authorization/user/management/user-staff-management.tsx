@@ -41,17 +41,22 @@ function UserStaffManagement() {
     const [listOrgWithoutChild, setListOrgWithoutChild] = useState<
         { value: string, label: string }[] | []
     >([]);
-    const [orgSelected, setOrgSelected] = useState<string | null>(null);
+    const [listPosition, setlistPosition] = useState<
+        { value: string, label: string }[] | []
+    >([]);
+
+    const [orgSelected, setOrgSelected] = useState("");
     const [member, setMember] = useState<Member[]>([]);
     const [userId, setUserId] = useState("");
 
-    const [roleOfUser, setRoleOfUser] = useState<string[]>([]);
+    const [roleOfUser, setRoleOfUser] = useState("");
 
     const {complex} = useContext(AuthContext);
 
     //Lay tat ca cac phong ban
     useEffect(() => {
         getAllOrgWithoutChild("0", complex);
+        // getAllPosition();
         getAllRole(complex);
     }, []);
 
@@ -93,11 +98,30 @@ function UserStaffManagement() {
         }
     };
 
+    // const getAllPosition = () => {
+    //     const items = Object.entries(POSITION).map(([key, value]) => {
+    //         return ({
+    //             value: key,
+    //             label: value,
+    //         });
+    //     });
+    //     setlistPosition(items);
+    // };
+
+
     const getAllRole = async (complexId: string) => {
         setLoading(true);
         try {
             const data = await getAllRoleAPI(complexId);
             setRoles(data);
+            const items = data.map(function (item: RoleItem) {
+                return ({
+                    value: item.id,
+                    label: item.role_name,
+                });
+            });
+            setlistPosition(items);
+
         } catch (err) {
             handleAxiosStatusCode(err);
         } finally {
@@ -107,7 +131,7 @@ function UserStaffManagement() {
 
     const getRoleByUser = async (userId: string) => {
         try {
-            const data = await getRoleByUserAPI(userId);
+            const data = await getRoleByUserAPI(userId, {orgId: orgSelected});
             setRoleOfUser(data);
         } catch (err) {
             handleAxiosStatusCode(err);
@@ -132,10 +156,10 @@ function UserStaffManagement() {
     }
 
     // // xu ly khi nhan nut cap role (khiên)
-    const handleUpdate = (userId: string): void => {
+    const handleUpdate = async (userId: string) => {
         // nhan tham so la thong tin hang can update
         setUserId(userId);
-        getRoleByUser(userId);
+        await getRoleByUser(userId);
         setOpenDialog(true);
     };
 
@@ -208,6 +232,7 @@ function UserStaffManagement() {
                 open={openDialog}
                 setOpen={setOpenDialog}
                 loading={loading}
+                org_id={orgSelected}
             />
 
             <StaffForm
@@ -216,7 +241,8 @@ function UserStaffManagement() {
                 loading={loading}
                 items={listOrgWithoutChild}
                 onSubmit={submitCreateAccount}
-                formData={staff}/>
+                formData={staff}
+                positions={listPosition}/>
         </>
     );
 }
