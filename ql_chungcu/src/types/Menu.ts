@@ -1,6 +1,6 @@
 import {
     BanknoteArrowDown,
-    BanknoteArrowUp,
+    BanknoteArrowUp, Box,
     Building,
     Building2, CircleDollarSign, FileChartColumnIncreasing,
     FileText, HandCoins,
@@ -100,6 +100,15 @@ export const menuItems: MenuItem[] = [
         url: "#",
         icon: CircleDollarSign,
         child: [
+            {
+                id: 21,
+                title: "Mô hình tài chính",
+                url: "/page/finance/model",
+                icon: Box,
+                child: [],
+                permissions: [],
+                requireAll: false,
+            },
             {
                 id: 13,
                 title: "Quản lý thu",

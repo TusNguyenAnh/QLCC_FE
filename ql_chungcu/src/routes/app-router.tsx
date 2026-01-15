@@ -19,6 +19,7 @@ import CashReport from "@/pages/report/cash-report.tsx";
 import PermissionManagement from "@/pages/authorization/permission/permission-management.tsx";
 import {RoleManagement} from "@/pages/authorization/role/role-management.tsx";
 import UserManagement from "@/pages/authorization/user/user-management.tsx";
+import FinanceModel from "@/pages/finance/model/finance-model.tsx";
 
 const AppRouter: React.FC = () => (
     <Routes>
@@ -83,6 +84,15 @@ const AppRouter: React.FC = () => (
             element={
                 <ProtectedRoute permissions={["view:building"]}>
                     <MainLayout content={<Building/>}/>
+                </ProtectedRoute>
+            }
+        />
+
+        <Route
+            path="/page/finance/model"
+            element={
+                <ProtectedRoute permissions={["view:building"]}>
+                    <MainLayout content={<FinanceModel/>}/>
                 </ProtectedRoute>
             }
         />

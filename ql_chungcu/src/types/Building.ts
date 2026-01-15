@@ -3,7 +3,8 @@ export type Building = {
     complex_id: string,
     building_name: string,
     address: string,
-    status?: string
+    status?: string,
+    financial_ratio: number,
 }
 
 export type fillItemBd = {

@@ -16,6 +16,7 @@ export interface User {
 export interface ProfileResponse {
     user: User;
     permissions: string[];
+    org_id: string;
 }
 
 export interface LoginResponse {

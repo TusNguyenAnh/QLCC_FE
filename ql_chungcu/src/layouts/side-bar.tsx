@@ -28,8 +28,7 @@ import {removeToken} from "@/utils/auth.ts";
 import {menuItems} from "@/types/Menu.ts";
 import type {MenuItem} from "@/types/Menu.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
-import {getTopLevelOrg} from "@/apis/orgAPI.ts";
-import {findByIdAPI} from "@/apis/complexAPI.ts";
+import {findComplexByIdAPI} from "@/apis/complexAPI.ts";
 import type {Complex} from "@/types/Complex.ts";
 
 export default function SidebarCus() {
@@ -45,7 +44,7 @@ export default function SidebarCus() {
     const getComplex = async (complexId: string) => {
         try {
             if (complexId) {
-                const data = await findByIdAPI(complexId);
+                const data = await findComplexByIdAPI(complexId);
                 setComplexInfo(data);
             }
         } catch (err) {
