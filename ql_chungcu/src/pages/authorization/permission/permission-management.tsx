@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {RotateCw} from "lucide-react";
@@ -36,7 +35,7 @@ function PermissionManagement() {
 
             setPermissions(transformed)
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 

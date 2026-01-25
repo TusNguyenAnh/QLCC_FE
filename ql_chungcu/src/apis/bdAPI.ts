@@ -20,3 +20,8 @@ export const deleteBdAPI = async (listBd: string[]) => {
     const res = await request.post('/bd/delete', {listBd: listBd});
     return res;
 }
+
+export const updateRatioAPI = async (config: any) => {
+  const res = await request.post("/bd/updateRatio", config);
+  return res.data;
+};

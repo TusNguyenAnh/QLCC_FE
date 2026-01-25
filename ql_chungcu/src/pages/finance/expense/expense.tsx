@@ -29,7 +29,6 @@ import ExpenseForm, {
 } from "@/pages/finance/expense/action-form-expense.tsx";
 import {AuthContext} from "@/context/AuthContext.tsx";
 import {getAllTaskTypeAPI} from "@/apis/taskTypeAPI.ts";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {createTaskAPI} from "@/apis/taskAPI.ts";
 
 export default function Expense() {
@@ -170,7 +169,7 @@ export default function Expense() {
             });
             setListTt(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -334,7 +333,7 @@ export default function Expense() {
             // Refresh danh sách
             fetchExpenses(appliedFilters, page, perPage);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

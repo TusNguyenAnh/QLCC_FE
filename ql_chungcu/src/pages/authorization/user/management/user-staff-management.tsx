@@ -1,6 +1,5 @@
 import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {RotateCw} from "lucide-react";
@@ -74,7 +73,7 @@ function UserStaffManagement() {
             const data = await findByOrgIdAPI(orgId, 1);
             setMember(Array.isArray(data) ? data : []);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
             setMember([]);
         } finally {
             setLoading(false);
@@ -94,7 +93,7 @@ function UserStaffManagement() {
             });
             setListOrgWithoutChild(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -123,7 +122,7 @@ function UserStaffManagement() {
             setlistPosition(items);
 
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }
@@ -134,7 +133,7 @@ function UserStaffManagement() {
             const data = await getRoleByUserAPI(userId, {orgId: orgSelected});
             setRoleOfUser(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -149,7 +148,7 @@ function UserStaffManagement() {
             await createStaffAPI(data);
             toast.success("Tạo tài khoản thành viên BQL thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }
@@ -170,7 +169,7 @@ function UserStaffManagement() {
             await assignRoleAPI(data);
             toast.success("Cập nhật vai trò cho người dùng thành công!");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

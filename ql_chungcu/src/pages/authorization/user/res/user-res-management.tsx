@@ -1,12 +1,10 @@
 import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Filter, RotateCw} from "lucide-react";
 
 import {AuthContext} from "@/context/AuthContext.tsx";
-import type {orgWithoutChild} from "@/types/Organization.ts";
 import {getUserByFilterAPI} from "@/apis/userAPI.ts";
 import {DataTable} from "@/layouts/tables/data-table.tsx";
 import {ColumnsUser} from "@/layouts/columns/column-tb-user.tsx";
@@ -55,7 +53,7 @@ function UserResManagement() {
             const data = await getUserByFilterAPI(filterUser);
             setMember(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -65,7 +63,7 @@ function UserResManagement() {
             const data = await getAllRoleAPI(complexId);
             setRoles(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }
@@ -76,7 +74,7 @@ function UserResManagement() {
             const data = await getRoleByUserAPI(userId, {});
             setRoleOfUser(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -96,7 +94,7 @@ function UserResManagement() {
             await assignRoleAPI(data);
             toast.success("Cập nhật vai trò cho người dùng thành công!");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

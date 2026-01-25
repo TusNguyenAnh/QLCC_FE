@@ -20,14 +20,11 @@ import {
     findByBuildingIdAPI,
     findByOrgId,
     removeResInOrgAPI,
-    updatePositionAPI
 } from "@/apis/resAPI.ts";
 import {toast} from "sonner";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {Label} from "@radix-ui/react-dropdown-menu";
 import {Input} from "@/components/ui/input.tsx";
 import {useDebounce} from "use-debounce";
-import {ColumnsMem} from "@/layouts/columns/column-tb-mem.tsx";
 
 type ComponentProps = {
     action: string
@@ -73,20 +70,6 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
     }, [buildingIdManage, tabValue, orgIdManage])
 
 
-    // const handleUpdatePostion = async (position: string, userId: string) => {
-    //     setLoading(true);
-    //     try {
-    //         await updatePositionAPI(userId, orgIdManage, position);
-    //         console.log(userId, position, orgIdManage);
-    //         setSelectedPosition(!selectedPosition);
-    //         toast.success("Cập nhật vai trò thành công!");
-    //     } catch (err) {
-    //         handleAxiosStatusCode(err);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const handleUpdate = (orgUpdate: fillItemBd): void => { // nhan tham so la thong tin hang can update
     }
 
@@ -105,7 +88,7 @@ export default function AddMemberOrg({open, setOpen, action, buildingIdManage, o
             }
             toast.success(tabValue === "resident" ? "Thêm mới thành công!" : "Loại bỏ thành viên thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setRowSelection({});
             setLoading(false);

@@ -187,14 +187,14 @@ export const menuItems: MenuItem[] = [
         permissions: ["view:user", "view:role", "view:permission"],
         requireAll: true,
     },
-    {
-        id: 7,
-        title: "Cài đặt",
-        url: "#",
-        icon: Settings,
-        child: [],
-        permissions: ["view:organization"],
-    },
+    // {
+    //     id: 7,
+    //     title: "Cài đặt",
+    //     url: "#",
+    //     icon: Settings,
+    //     child: [],
+    //     permissions: ["view:organization"],
+    // },
     {
         id: 9,
         title: "Đăng xuất",

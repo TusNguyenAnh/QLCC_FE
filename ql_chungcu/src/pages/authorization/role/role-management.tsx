@@ -6,7 +6,6 @@ import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Plus, Trash2, Edit2, Users, Lock, UserPlus} from "lucide-react"
 import type {RoleItem} from "@/types/Role.ts";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {createRoleAPI, getAllRoleAPI} from "@/apis/roleAPI.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
 import {useDebounce} from "use-debounce";
@@ -55,7 +54,7 @@ export function RoleManagement() {
             const data = await getAllRoleAPI(complexId)
             setRoles(data)
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }
@@ -78,7 +77,7 @@ export function RoleManagement() {
 
             setPermissions(transformed)
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -119,7 +118,7 @@ export function RoleManagement() {
             getAllRole(complex)
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }
@@ -133,7 +132,7 @@ export function RoleManagement() {
             getAllRole(complex)
             toast.success("Cập nhật quyền cho vai trò thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

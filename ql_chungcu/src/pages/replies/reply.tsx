@@ -5,7 +5,6 @@ import { StatsCards } from "./overview/stats-cards..tsx";
 import { useContext, useEffect, useState } from "react";
 import { TaskType } from "@/pages/replies/task-type/task-type.tsx";
 import type { ActionSummary, Task, TaskWorkflow } from "@/types/Task.ts";
-import { handleAxiosStatusCode } from "@/utils/request.ts";
 import {
   approveTaskAPI,
   getAllTaskByOrgAPI,
@@ -81,7 +80,7 @@ function Reply() {
       const data = await getWfByTaskAPI($taskId);
       setWorkflowTask(data);
     } catch (err) {
-      handleAxiosStatusCode(err);
+      console.log(err);
     }
   };
   const getMediaFile = async ($ownerId: string) => {
@@ -89,7 +88,7 @@ function Reply() {
       const data = await getMediaFileAPI($ownerId);
       setMediaFiles(data);
     } catch (err) {
-      handleAxiosStatusCode(err);
+      console.log(err);
     }
   };
 
@@ -134,7 +133,7 @@ function Reply() {
       }
       setSelectedRequest(null);
     } catch (err) {
-      handleAxiosStatusCode(err);
+      console.log(err);
     } finally {
       setTimeout(() => {
         setLoading(false);
@@ -165,7 +164,7 @@ function Reply() {
       setListTaskApproved(response.data.data);
       setSelectedRequest(null);
     } catch (err) {
-      handleAxiosStatusCode(err);
+      console.log(err);
     } finally {
       setTimeout(() => {
         setLoading(false);
@@ -180,7 +179,7 @@ function Reply() {
       // Cập nhật tổng số yêu cầu pending khi vào tab tổng quan
       await getAllTaskByOrg(orgManage, 2, {}, 1, 50, true);
     } catch (err) {
-      handleAxiosStatusCode(err);
+      console.log(err);
     }
   };
 
@@ -222,7 +221,7 @@ function Reply() {
           : "Đã từ chối xét duyệt yêu cầu!"
       );
     } catch (err) {
-      handleAxiosStatusCode(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }

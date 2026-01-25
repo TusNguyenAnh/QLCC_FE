@@ -13,7 +13,6 @@ import {ColumnsTt} from "@/layouts/columns/column-tb-tt.tsx";
 import type {fillItemTt} from "@/types/TaskType.ts";
 import TaskTypeForm, {type TaskTypeFormSchema} from "@/pages/replies/task-type/action-form-tt.tsx";
 import {toast} from "sonner";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {getAllPriorityAPI} from "@/apis/priorityAPI.ts";
 import {getAllWfAPI} from "@/apis/wfAPI.ts";
 
@@ -54,7 +53,7 @@ export function TaskType() {
             const data = await getAllTaskTypeAPI(complexId)
             setTaskType(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -70,7 +69,7 @@ export function TaskType() {
             });
             setListPriority(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -85,7 +84,7 @@ export function TaskType() {
             });
             setListWf(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -100,7 +99,7 @@ export function TaskType() {
             }
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

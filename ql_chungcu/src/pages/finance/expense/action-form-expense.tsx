@@ -223,7 +223,7 @@ export default function ExpenseForm({
                             </div>
 
                             <div className="grid gap-3">
-                                <Label htmlFor="tasktype_id">Quy trình áp dụng</Label>
+                                <Label htmlFor="tasktype_id">Loại đề xuất</Label>
                                 <Controller
                                     control={control}
                                     name="tasktype_id"

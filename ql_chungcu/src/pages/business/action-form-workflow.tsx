@@ -11,6 +11,13 @@ import { Loader2, Plus, Trash2, X, ChevronsUpDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -49,7 +56,7 @@ const schema = z.object({
         description: z.string().optional(),
         status: z.number().optional(),
         position: z.array(z.string()),
-      })
+      }),
     )
     .optional(),
 });
@@ -92,7 +99,7 @@ export default function WorkflowForm({
       status: formData?.status || 0,
       workflow_step: formData?.workflow_step?.length
         ? formData.workflow_step.map((step) => ({
-            org_level: step.org_level || 1,
+            org_level: step.org_level || itemsOrg[0]?.value || 1,
             step_order: step.step_order || 1,
             description: step.description || "",
             status: step.status || 0,
@@ -100,7 +107,7 @@ export default function WorkflowForm({
           }))
         : [
             {
-              org_level: 1,
+              org_level: itemsOrg[0]?.value || 1,
               step_order: 1,
               description: "",
               status: 0,
@@ -119,7 +126,7 @@ export default function WorkflowForm({
       status: formData?.status || 0,
       workflow_step: formData?.workflow_step?.length
         ? formData.workflow_step.map((step) => ({
-            org_level: step.org_level || 1,
+            org_level: step.org_level || itemsOrg[0]?.value || 1,
             step_order: step.step_order || 1,
             description: step.description || "",
             status: step.status || 0,
@@ -127,7 +134,7 @@ export default function WorkflowForm({
           }))
         : [
             {
-              org_level: 1,
+              org_level: itemsOrg[0]?.value || 1,
               step_order: 1,
               description: "",
               status: 0,
@@ -135,7 +142,7 @@ export default function WorkflowForm({
             },
           ],
     });
-  }, [formData, reset]);
+  }, [formData, reset, itemsOrg]);
 
   const { fields, append, remove, replace } = useFieldArray({
     control,
@@ -144,7 +151,7 @@ export default function WorkflowForm({
 
   const onAdd = () => {
     append({
-      org_level: 1,
+      org_level: itemsOrg[0]?.value || 1,
       step_order: fields.length + 1,
       description: "",
       status: 0,
@@ -201,25 +208,7 @@ export default function WorkflowForm({
           <div className="grid auto-rows-min px-4 h-[75vh] overflow-y-auto">
             <div className="grid gap-4">
               <div className="grid gap-3">
-                <div className="flex justify-between">
-                  <Label htmlFor="workflow_name">Tên quy trình</Label>
-                  <div className="flex items-center space-x-2">
-                    <Controller
-                      name="status"
-                      control={control}
-                      render={({ field }) => (
-                        <Switch
-                          id="status"
-                          checked={field.value == 0} // convert 0/1 sang boolean
-                          onCheckedChange={(checked) =>
-                            field.onChange(checked ? 0 : 1)
-                          } // convert boolean -> 1/0
-                        />
-                      )}
-                    />
-                    <Label htmlFor="status">Kích hoạt quy trình</Label>
-                  </div>
-                </div>
+                <Label htmlFor="workflow_name">Tên quy trình</Label>
                 <Input
                   id="workflow_name"
                   {...register("workflow_name", {
@@ -272,119 +261,130 @@ export default function WorkflowForm({
                   </div>
 
                   {/*<div className="grid grid-cols-2 gap-4">*/}
-                    <div>
-                      <Label className="mb-2">Cấp ban xét duyệt</Label>
-                      <Controller
-                        control={control}
-                        name={`workflow_step.${index}.org_level`}
-                        render={({ field }) => (
-                          <Combobox
-                            items={itemsOrg}
-                            onChange={(value) => field.onChange(value)}
-                            // itemUpdate={action === "UPDATE" ? formData.building_id : ""}
-                          />
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <Label className="my-2">Vị trí</Label>
-                      <Controller
-                        control={control}
-                        name={`workflow_step.${index}.position`}
-                        render={({ field }) => {
-                          const selectedPositions = field.value || [];
-                          return (
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  className="w-full justify-between min-h-10 h-auto"
-                                >
-                                  <div className="flex flex-wrap gap-1 flex-1">
-                                    {selectedPositions.length === 0 ? (
-                                      <span className="text-muted-foreground">
-                                        Chọn vị trí...
-                                      </span>
-                                    ) : (
-                                      selectedPositions.map((posId: string) => {
-                                        const pos = itemsPosition.find(
-                                          (p) => p.value === posId
-                                        );
-                                        return pos ? (
-                                          <Badge
-                                            key={posId}
-                                            variant="secondary"
-                                            className="mr-1"
+                  <div>
+                    <Label className="mb-2">Cấp ban xét duyệt</Label>
+                    <Controller
+                      control={control}
+                      name={`workflow_step.${index}.org_level`}
+                      render={({ field }) => (
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(Number(value))
+                          }
+                          value={field.value?.toString()}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Chọn cấp ban" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {itemsOrg.map((item) => (
+                              <SelectItem
+                                key={item.value}
+                                value={item.value.toString()}
+                              >
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <Label className="my-2">Vị trí</Label>
+                    <Controller
+                      control={control}
+                      name={`workflow_step.${index}.position`}
+                      render={({ field }) => {
+                        const selectedPositions = field.value || [];
+                        return (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className="w-full justify-between min-h-10 h-auto"
+                              >
+                                <div className="flex flex-wrap gap-1 flex-1">
+                                  {selectedPositions.length === 0 ? (
+                                    <span className="text-muted-foreground">
+                                      Chọn vị trí...
+                                    </span>
+                                  ) : (
+                                    selectedPositions.map((posId: string) => {
+                                      const pos = itemsPosition.find(
+                                        (p) => p.value === posId,
+                                      );
+                                      return pos ? (
+                                        <Badge
+                                          key={posId}
+                                          variant="secondary"
+                                          className="mr-1"
+                                        >
+                                          {pos.label}
+                                          <button
+                                            type="button"
+                                            className="ml-1 rounded-full outline-none hover:bg-muted"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              e.stopPropagation();
+                                              field.onChange(
+                                                selectedPositions.filter(
+                                                  (id: string) => id !== posId,
+                                                ),
+                                              );
+                                            }}
                                           >
-                                            {pos.label}
-                                            <button
-                                              type="button"
-                                              className="ml-1 rounded-full outline-none hover:bg-muted"
-                                              onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                field.onChange(
-                                                  selectedPositions.filter(
-                                                    (id: string) => id !== posId
-                                                  )
-                                                );
-                                              }}
-                                            >
-                                              <X className="h-3 w-3" />
-                                            </button>
-                                          </Badge>
-                                        ) : null;
-                                      })
-                                    )}
-                                  </div>
-                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-full p-0 z-[1000] pointer-events-auto">
-                                <Command>
-                                  <CommandInput placeholder="Tìm kiếm vị trí..." />
-                                  <CommandEmpty>
-                                    Không tìm thấy vị trí.
-                                  </CommandEmpty>
-                                  <CommandGroup className="max-h-64 overflow-auto">
-                                    {itemsPosition.map((item) => (
-                                      <CommandItem
-                                        key={item.value}
-                                        onSelect={() => {
-                                          const isSelected =
-                                            selectedPositions.includes(
-                                              item.value
-                                            );
-                                          const newValue = isSelected
-                                            ? selectedPositions.filter(
-                                                (id: string) =>
-                                                  id !== item.value
-                                              )
-                                            : [
-                                                ...selectedPositions,
-                                                item.value,
-                                              ];
-                                          field.onChange(newValue);
-                                        }}
-                                      >
-                                        <Checkbox
-                                          checked={selectedPositions.includes(
-                                            item.value
-                                          )}
-                                          className="mr-2"
-                                        />
-                                        {item.label}
-                                      </CommandItem>
-                                    ))}
-                                  </CommandGroup>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
-                          );
-                        }}
-                      />
-                    </div>
+                                            <X className="h-3 w-3" />
+                                          </button>
+                                        </Badge>
+                                      ) : null;
+                                    })
+                                  )}
+                                </div>
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0 z-[1000] pointer-events-auto">
+                              <Command>
+                                <CommandInput placeholder="Tìm kiếm vị trí..." />
+                                <CommandEmpty>
+                                  Không tìm thấy vị trí.
+                                </CommandEmpty>
+                                <CommandGroup className="max-h-64 overflow-auto">
+                                  {itemsPosition.map((item) => (
+                                    <CommandItem
+                                      key={item.value}
+                                      onSelect={() => {
+                                        const isSelected =
+                                          selectedPositions.includes(
+                                            item.value,
+                                          );
+                                        const newValue = isSelected
+                                          ? selectedPositions.filter(
+                                              (id: string) => id !== item.value,
+                                            )
+                                          : [...selectedPositions, item.value];
+                                        field.onChange(newValue);
+                                      }}
+                                    >
+                                      <Checkbox
+                                        checked={selectedPositions.includes(
+                                          item.value,
+                                        )}
+                                        className="mr-2"
+                                      />
+                                      {item.label}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        );
+                      }}
+                    />
+                  </div>
                   {/*</div>*/}
                   <div className="mt-4">
                     <Label className="mb-2">Mô tả</Label>

@@ -25,7 +25,6 @@ import {
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {createComplexAPI} from "@/apis/complexAPI.ts";
 import {toast, Toaster} from "sonner";
 
@@ -94,7 +93,7 @@ export const RegisterService: React.FC = () => {
             await createComplexAPI(formData);
             toast.success("Đăng ký dịch vụ thành công! Chúng tôi sẽ gửi thông tin qua email cho bạn trong thời gian sớm nhất.");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

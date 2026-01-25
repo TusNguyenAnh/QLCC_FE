@@ -11,7 +11,6 @@ import type {fillItemOrg, orgWithoutChild} from "@/types/Organization.ts";
 import OrgForm, {type OrgFormSchema} from "./action-form-org.tsx";
 import {createOrgAPI, deleteOrgAPI, getAllOrgAPI, getAllOrgWithoutChildAPI, updateOrgAPI} from "@/apis/orgAPI.ts";
 import {toast} from "sonner";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {ColumnsOrg} from "@/layouts/columns/column-tb-org.tsx";
 import {columnLabelsOrg} from "@/utils/column-label.ts";
 import AddMemberOrg from "@/pages/organization/add-member-org.tsx";
@@ -60,7 +59,7 @@ function Organization() {
             });
             setListOrgWithoutChild(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -76,7 +75,7 @@ function Organization() {
             });
             setListBuilding(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -124,7 +123,7 @@ function Organization() {
             setOrg(orgs);
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,4 @@
 import {Button} from "@/components/ui/button.tsx";
-import {type BdFormSchema} from "@/pages/building/action-form-bd.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {RotateCw, Upload, ChevronDown, Filter} from "lucide-react";
 import {
@@ -14,18 +13,10 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible.tsx";
 import {DataTable} from "@/layouts/tables/data-table.tsx";
-import type {fillItemBd} from "@/types/Building.ts";
 import {columnLabelsRes} from "@/utils/column-label.ts";
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
-import {
-    createBdAPI,
-    deleteBdAPI,
-    getAllBdAPI,
-    updateBdAPI,
-} from "@/apis/bdAPI.ts";
 import {toast} from "sonner";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {
     createAptResUseFileAPI,
     createResUseFileAPI,
@@ -34,7 +25,6 @@ import {
 import type {Resident} from "@/types/Resident.ts";
 import {ColumnsRes} from "@/layouts/columns/column-tb-res.tsx";
 import {
-    exportDataToExcel,
     RESIDENT_TEMPLATE,
     RESIDENT_VALIDATION_RULES,
 } from "@/utils/excel";
@@ -47,12 +37,7 @@ import FilterResForm, {type FilterResFormSchema} from "@/pages/resident/filter-f
 import {createUserAPI} from "@/apis/userAPI.ts";
 
 export function Resident() {
-    const [openDialog, setOpenDialog] = useState(false);
-
-    const [loading, setLoading] = useState(false);
     const [resident, setResident] = useState<[]>([]);
-    const [resUpdate, setResUpdate] = useState({});
-    const [action, setAction] = useState("CREATE");
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword] = useDebounce(keyword, 500); // ⏱️ Chờ 500ms sau mỗi lần gõ
     const [rowSelection, setRowSelection] = useState({});
@@ -85,26 +70,8 @@ export function Resident() {
             const data = await getResByFilterAPI(filterRes);
             setResident(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
-    };
-
-    // Export data xuat ra excel
-    const handleExportData = () => {
-        // Map dữ liệu hiện tại sang format Excel
-        const excelData = resident.map((res, index) => ({
-            stt: index + 1,
-            apartment_code: res.apartment_code || "",
-            fullname: res.fullname || "",
-            cccd: res.cccd || "",
-            email: res.email || "",
-            phone_number: res.phone_number || "",
-            birthday: res.birthday ? formatDateToExcel(res.birthday) : "",
-            relationship: res.relationship || "",
-            gender: res.gender === "1" ? "Nam" : res.gender === "0" ? "Nữ" : "Khác",
-        }));
-
-        exportDataToExcel(excelData, RESIDENT_TEMPLATE, "Danh_Sach_Cu_Dan.xlsx");
     };
 
     // Import handler - GỬI FILE lên Backend
@@ -118,7 +85,7 @@ export function Resident() {
             await createResUseFileAPI(formData);
             toast.success("Nhập dữ liệu cư dân thành công!");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -132,14 +99,8 @@ export function Resident() {
             await createAptResUseFileAPI(formData);
             toast.success("Nhập dữ liệu cư dân - căn hộ thành công!");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
-    };
-
-    // Helper: Convert YYYY-MM-DD -> DD/MM/YYYY
-    const formatDateToExcel = (dateStr: string): string => {
-        const [year, month, day] = dateStr.split("-");
-        return `${day}/${month}/${year}`;
     };
 
     const handleCreateUser = async (listRes: Resident[]) => {
@@ -147,70 +108,15 @@ export function Resident() {
             await createUserAPI(listRes);
             toast.success("Cấp tài khoản cư dân thành công!");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setRowSelection({});
-        }
-    };
-
-    // xu ly khi nhan nut them moi
-    const handleCreate = () => {
-        setBdUpdate({complex_id: "1"}); // complex_id se lay trong localstorage hoac co the lay tu api
-        setAction("CREATE");
-        setOpenDialog(true);
-    };
-
-
-    // xu ly khi nhan nut sua
-    const handleUpdate = (bdUpdate: fillItemBd): void => {
-        // nhan tham so la thong tin hang can update
-        setBdUpdate(bdUpdate);
-        setAction("UPDATE");
-        setOpenDialog(true);
-    };
-
-    const handleDelete = async (listBd: string[]): void => {
-        // nhan tham so la thong tin hang can update
-        // setOrgUpdate(orgUpdate)
-        // getAllOrgWithoutChild(orgUpdate.id)
-        // setAction("UPDATE")
-        // setOpenDialog(true)
-        // console.log(listBd);
-        await deleteBdAPI(listBd);
-        const buildings = await getAllBdAPI();
-        setBuilding(buildings);
-        setRowSelection({});
-    };
-
-    //submit form
-    const submitCreateOrUpdate = async (data: BdFormSchema, bdId: string) => {
-        setLoading(true);
-        try {
-            if (action === "CREATE") {
-                await createBdAPI(data);
-            } else {
-                await updateBdAPI(data, bdId);
-            }
-            const buildings = await getAllBdAPI();
-            setBuilding(buildings);
-            toast.success(
-                action == "CREATE"
-                    ? "Thêm mới thành công!"
-                    : "Cập nhật thông tin thành công!"
-            );
-        } catch (err) {
-            handleAxiosStatusCode(err);
-        } finally {
-            setLoading(false);
         }
     };
 
     return (
         <>
             <div className="flex flex-wrap items-center justify-end gap-2 md:flex-row">
-                <Button className="hover: cursor-pointer" onClick={handleCreate}>
-                    Thêm mới
-                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button className="gap-2 bg-green-800 hover:bg-green-900">
@@ -232,13 +138,6 @@ export function Resident() {
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                {/*<BdForm open={openDialog}*/}
-                {/*        setOpen={setOpenDialog}*/}
-                {/*        loading={loading}*/}
-                {/*        action={action}*/}
-                {/*        formData={bdUpdate}*/}
-                {/*        onSubmit={submitCreateOrUpdate}>*/}
-                {/*</BdForm>*/}
             </div>
 
             <Collapsible open={showFilter} onOpenChange={setShowFilter}>
@@ -277,9 +176,9 @@ export function Resident() {
 
             <div className="p-4 mt-4 border border-gray-300 rounded-xl">
                 <DataTable
-                    columns={ColumnsRes({handleUpdate, handleDelete, cusItem})}
+                    columns={ColumnsRes({cusItem})}
                     data={resident}
-                    handleDelete={handleDelete}
+                    handleDelete={undefined}
                     columnLabels={columnLabelsRes}
                     keyword={debouncedKeyword}
                     rowSelection={rowSelection}

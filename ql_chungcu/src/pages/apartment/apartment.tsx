@@ -1,11 +1,10 @@
 import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {toast} from "sonner";
 import {Button} from "@/components/ui/button.tsx";
 import {Label} from "@radix-ui/react-dropdown-menu";
 import {Input} from "@/components/ui/input.tsx";
-import {ChevronDown, RotateCw, Upload} from "lucide-react";
+import {RotateCw, Upload} from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -16,7 +15,7 @@ import {
     SelectValue
 } from "@/components/ui/select.tsx";
 import AptForm, {type AptFormSchema} from "@/pages/apartment/action-form-apt.tsx";
-import type {bdItemCheckbox, Building} from "@/types/Building.ts";
+import type {bdItemCheckbox} from "@/types/Building.ts";
 import {getAllBdAPI} from "@/apis/bdAPI.ts";
 import {createAptAPI, createAptUseFileAPI, getApartmentByBuilding, updateAptAPI} from "@/apis/aptAPI.ts";
 import {DataTable} from "@/layouts/tables/data-table.tsx";
@@ -26,9 +25,7 @@ import {columnLabelsApt} from "@/utils/column-label.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
 import {findByIdAPI} from "@/apis/orgAPI.ts";
 import {ExcelImportDialog} from "@/layouts/excel/ExcelImportDialog.tsx";
-import {APT_RES_TEMPLATE, APT_RES_VALIDATION_RULES} from "@/layouts/excel/templates/apt_res-template.ts";
 import {APARTMENT_TEMPLATE, APARTMENT_VALIDATION_RULES} from "@/layouts/excel/templates/apartment-template.ts";
-import {createAptResUseFileAPI} from "@/apis/resAPI.ts";
 
 function Apartment() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -72,7 +69,7 @@ function Apartment() {
             });
             setBuildings(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -82,7 +79,7 @@ function Apartment() {
             const data = await getApartmentByBuilding(value)
             setApt(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -123,7 +120,7 @@ function Apartment() {
             }
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            // console.log(err);
         } finally {
             setLoading(false);
         }
@@ -139,7 +136,7 @@ function Apartment() {
             await createAptUseFileAPI(formData);
             toast.success("Nhập dữ liệu căn hộ thành công!");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 

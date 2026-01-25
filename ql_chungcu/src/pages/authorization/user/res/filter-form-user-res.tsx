@@ -9,9 +9,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {getAllBdAPI} from "@/apis/bdAPI.ts";
 import {findByIdAPI} from "@/apis/orgAPI.ts";
 import type {bdItemCheckbox} from "@/types/Building.ts";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {Combobox} from "@/components/ui/combobox.tsx";
-import {FilterX, Search} from "lucide-react";
+import {FilterX} from "lucide-react";
 
 const schema = z.object({
     building_id: z.string().optional(),
@@ -75,7 +74,7 @@ export default function FilterUserResForm({onSubmit}: ComponentProps) {
             });
             setBuildings(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 

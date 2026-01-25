@@ -15,7 +15,6 @@ import {Controller, useForm} from "react-hook-form";
 import {useContext, useEffect, useState} from "react";
 import {toast, Toaster} from "sonner";
 import {Loader2} from "lucide-react";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {getProfile, login} from "@/apis/authAPI.ts";
 import {useNavigate} from "react-router-dom";
 import {findByIdAPI, getAllOrgWithoutChildAPI} from "@/apis/orgAPI.ts";
@@ -80,7 +79,7 @@ export function Login() {
             });
             setListComplex(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -96,7 +95,7 @@ export function Login() {
             });
             setListOrgWithoutChild(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -127,7 +126,7 @@ export function Login() {
             toast.success("Đăng nhập thành công!");
             navigate("/page/dashboard");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

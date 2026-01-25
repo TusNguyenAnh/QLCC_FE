@@ -1,22 +1,10 @@
 import {useContext, useEffect, useState} from "react"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
-import {Badge} from "@/components/ui/badge"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {Textarea} from "@/components/ui/textarea"
-import {Switch} from "@/components/ui/switch"
-import {Plus, Edit, Trash2, Users, Settings, ArrowDown, ArrowUp, Loader2} from "lucide-react"
-import {getAllOrgAPI, getTopLevelOrg} from "@/apis/orgAPI.ts";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
+import {Plus} from "lucide-react"
+import {getTopLevelOrg} from "@/apis/orgAPI.ts";
 import {createWfAPI, getAllWfAPI} from "@/apis/wfAPI.ts";
 import {toast} from "sonner";
 import WorkflowForm, {type WorkflowFormSchema} from "@/pages/business/action-form-workflow.tsx";
-import {getAllBdAPI} from "@/apis/bdAPI.ts";
-import type {bdItemCheckbox} from "@/types/Building.ts";
 import {ListWorkflow} from "@/pages/business/list-workflow.tsx";
 import type {listWorkflow} from "@/types/Workflow.ts";
 import DetailWorkflow from "@/pages/business/detail-workflow.tsx";
@@ -77,7 +65,7 @@ function BusinessProcess() {
             }
             setListOrgLevel(orgLevel);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -93,7 +81,7 @@ function BusinessProcess() {
             });
             setListPosition(items);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -102,7 +90,7 @@ function BusinessProcess() {
             const data = await getAllWfAPI(complexId)
             setWorkflows(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     }
 
@@ -117,7 +105,7 @@ function BusinessProcess() {
             getAllWorkflow(complex);
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,4 @@
 import {useContext, useEffect, useState} from "react";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {toast} from "sonner";
 import {Button} from "@/components/ui/button.tsx";
 import {Label} from "@radix-ui/react-dropdown-menu";
@@ -68,7 +67,7 @@ export function Building() {
             setBuilding(buildings);
             toast.success(action == "CREATE" ? "Thêm mới thành công!" : "Cập nhật thông tin thành công!")
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

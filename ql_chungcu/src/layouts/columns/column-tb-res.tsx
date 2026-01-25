@@ -12,7 +12,7 @@ import {Button} from "@/components/ui/button";
 import {DataTableColumnHeader} from "@/layouts/data-table-header.tsx";
 
 import type {ColumnDef} from "@tanstack/react-table"
-import type {Building, fillItemBd} from "@/types/Building.ts";
+import type {fillItemBd} from "@/types/Building.ts";
 import type {Resident} from "@/types/Resident.ts";
 
 interface CusItem<TData> {
@@ -27,7 +27,7 @@ interface ComponentProps {
 }
 
 //Cột là nơi bạn xác định cốt lõi của bảng trông như thế nào. Chúng xác định dữ liệu sẽ được hiển thị, cách định dạng, sắp xếp và lọc dữ liệu.
-export const ColumnsRes = ({handleUpdate, handleDelete, cusItem}: ComponentProps): ColumnDef<Resident>[] => [
+export const ColumnsRes = ({cusItem}: ComponentProps): ColumnDef<Resident>[] => [
     {
         id: "select_all",
         header: ({table}) => {
@@ -148,7 +148,7 @@ export const ColumnsRes = ({handleUpdate, handleDelete, cusItem}: ComponentProps
                         <DropdownMenuLabel>Chức năng</DropdownMenuLabel>
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem
-                            onClick={() => handleUpdate(resItemUpdate)}
+                            // onClick={() => handleUpdate(resItemUpdate)}
                         >
                             Sửa
                         </DropdownMenuItem>
@@ -160,7 +160,7 @@ export const ColumnsRes = ({handleUpdate, handleDelete, cusItem}: ComponentProps
                         }
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem
-                            onClick={() => handleDelete([resItemUpdate.id])}
+                            // onClick={() => handleDelete([resItemUpdate.id])}
                         >
                             Ngưng hoạt động</DropdownMenuItem>
 

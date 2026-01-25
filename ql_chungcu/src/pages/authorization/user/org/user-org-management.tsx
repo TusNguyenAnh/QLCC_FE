@@ -1,6 +1,5 @@
 import {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
-import {handleAxiosStatusCode} from "@/utils/request.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {RotateCw} from "lucide-react";
@@ -65,8 +64,7 @@ function UserOrgManagement() {
             const data = await findByOrgIdAPI(org.id, 0);
             setMember(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error("Error fetching members:", err);
-            handleAxiosStatusCode(err);
+            console.log(err);
             setMember([]);
         } finally {
             setLoading(false);
@@ -80,7 +78,7 @@ function UserOrgManagement() {
 
             setListOrgWithoutChild(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -90,7 +88,7 @@ function UserOrgManagement() {
             const data = await getAllRoleAPI(complexId);
             setRoles(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }
@@ -101,7 +99,7 @@ function UserOrgManagement() {
             const data = await getRoleByUserAPI(userId, {orgId: orgSelected?.id});
             setRoleOfUser(data);
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         }
     };
 
@@ -118,11 +116,10 @@ function UserOrgManagement() {
     const assignRole = async (data: AssignRoleFormSchema) => {
         setLoading(true);
         try {
-            console.log(data);
             await assignRoleAPI(data);
             toast.success("Cập nhật vai trò cho người dùng thành công!");
         } catch (err) {
-            handleAxiosStatusCode(err);
+            console.log(err);
         } finally {
             setLoading(false);
         }

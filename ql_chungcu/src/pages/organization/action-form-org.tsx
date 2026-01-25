@@ -22,7 +22,6 @@ import type { fillItemOrg } from "@/types/Organization.ts";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import type { bdItemCheckbox } from "@/types/Building.ts";
 import { AuthContext } from "@/context/AuthContext.tsx";
-import { handleAxiosStatusCode } from "@/utils/request.ts";
 import { getBdIdByOrgIdAPI } from "@/apis/orgAPI.ts";
 
 // Định nghĩa schema Zod
@@ -131,7 +130,7 @@ export default function OrgForm({
       );
       setItemsBd(buildingNotManaged);
     } catch (err) {
-      handleAxiosStatusCode(err);
+      console.log(err);
     }
   };
 
