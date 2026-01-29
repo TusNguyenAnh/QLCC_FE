@@ -107,9 +107,9 @@ export function RequestDetails({
                                 <div className="flex items-center gap-2">
                                     <MapPin className="h-4 w-4 text-muted-foreground"/>
                                     <div>
-                                        <p className="text-sm text-muted-foreground">Căn hộ</p>
+                                        <p className="text-sm text-muted-foreground">Toà nhà</p>
                                         <p className="font-medium">
-                                            {request.building_name}-{request.apt_number}
+                                            {request.building_name}
                                         </p>
                                     </div>
                                 </div>

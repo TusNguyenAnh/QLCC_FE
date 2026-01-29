@@ -1,271 +1,282 @@
-import {useEffect} from "react";
-import {Controller, useForm, useWatch} from "react-hook-form";
-import {z} from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Loader2} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
 import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
 } from "@/components/ui/sheet.tsx";
-import {Combobox} from "@/components/ui/combobox.tsx";
+import { Combobox } from "@/components/ui/combobox.tsx";
 
 // Định nghĩa schema Zod
 const schema = z.object({
-    task_name: z.string().min(1, "Tên khoản thu không được để trống"),
-    description: z.string().optional(),
-    apartment_id: z.string().optional(),
-    building_id: z.array(z.string()).optional(),
-    original_amount: z.number().optional(),
-    tasktype_id: z.string().optional(),
-    files: z.any().optional(),
-    revenue_type: z.number().optional(),
+  task_name: z.string().min(1, "Tên khoản thu không được để trống"),
+  description: z.string().optional(),
+  apartment_id: z.string().optional(),
+  building_id: z.array(z.string()).optional(),
+  original_amount: z.number().optional(),
+  tasktype_id: z.string().optional(),
+  files: z.any().optional(),
+  revenue_type: z.number().optional(),
 });
 
 export type RevenueFormSchema = z.infer<typeof schema>;
 
 type ComponentProps = {
-    onSubmit: (data: RevenueFormSchema) => void;
-    open?: boolean;
-    setOpen?: (open: boolean) => void;
-    loading?: boolean;
-    itemsBd: any[];
-    itemsTt: any[];
-    itemsApt: any[];
-    onBuildingChange?: (buildingId: string) => void;
+  onSubmit: (data: RevenueFormSchema) => void;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+  loading?: boolean;
+  itemsBd: any[];
+  itemsTt: any[];
+  itemsApt: any[];
+  onBuildingChange?: (buildingId: string) => void;
 };
 
 export default function RevenueForm({
-                                        open,
-                                        setOpen,
-                                        loading,
-                                        onSubmit,
-                                        itemsTt,
-                                        itemsBd,
-                                        itemsApt,
-                                        onBuildingChange,
-                                    }: ComponentProps) {
-    const {
-        register,
-        handleSubmit,
-        reset,
-        control,
-        formState: {errors},
-    } = useForm<RevenueFormSchema>({
-        resolver: zodResolver(schema),
-        defaultValues: {
-            task_name: "",
-            description: "",
-            tasktype_id: "",
-            building_id: [],
-            apartment_id: "",
-            original_amount: 1,
-            files: undefined,
-        },
+  open,
+  setOpen,
+  loading,
+  onSubmit,
+  itemsTt,
+  itemsBd,
+  itemsApt,
+  onBuildingChange,
+}: ComponentProps) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<RevenueFormSchema>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      task_name: "",
+      description: "",
+      tasktype_id: "",
+      building_id: [],
+      apartment_id: "",
+      original_amount: 1,
+      files: undefined,
+    },
+  });
+
+  // Theo dõi giá trị building_id để hiển thị căn hộ
+  const selectedBuildingId = useWatch({
+    control,
+    name: "building_id",
+  });
+
+  useEffect(() => {
+    reset({
+      task_name: "",
+      description: "",
+      tasktype_id: "",
+      building_id: [],
+      apartment_id: "",
+      original_amount: 1,
+      files: undefined,
     });
+  }, [reset]);
 
-    // Theo dõi giá trị building_id để hiển thị căn hộ
-    const selectedBuildingId = useWatch({
-        control,
-        name: "building_id",
-    });
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent className="sm:max-w-[425px] flex flex-col">
+        {loading && (
+          <div className="absolute inset-0 z-10 bg-white/50 flex items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-primary mr-1" />
+            Loading...
+          </div>
+        )}
 
-    useEffect(() => {
-        reset({
-            task_name: "",
-            description: "",
-            tasktype_id: "",
-            building_id: [],
-            apartment_id: "",
-            original_amount: 1,
-            files: undefined,
-        });
-    }, [reset]);
+        <form
+          className="flex flex-col flex-1 relative"
+          onSubmit={handleSubmit((data) => {
+            // Gửi ngược data + id lên cha
+            const allIds = itemsBd
+              .filter((item) => item.value !== "ALL")
+              .map((item) => item.value);
 
-    return (
-        <Sheet open={open} onOpenChange={setOpen}>
-            <SheetContent className="sm:max-w-[425px] flex flex-col">
-                {loading && (
-                    <div className="absolute inset-0 z-10 bg-white/50 flex items-center justify-center">
-                        <Loader2 className="h-6 w-6 animate-spin text-primary mr-1"/>
-                        Loading...
-                    </div>
+            if (data.building_id?.includes("ALL")) {
+              data.building_id = allIds;
+              // xu ly tao khoan chi toan khu
+              data.revenue_type = 0;
+            } else {
+              // xu ly tao khoan chi noi bo toa
+              data.revenue_type = 1;
+            }
+
+            onSubmit(data);
+          })}
+        >
+          <SheetHeader>
+            <SheetTitle>Thêm mới đề xuất khoản thu</SheetTitle>
+            <SheetDescription>
+              Nhập thông tin đề xuất khoản thu mới. Nhấn nút lưu để hoàn thành
+              việc thêm mới.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="grid auto-rows-min px-4 h-[70vh] overflow-y-auto">
+            <div className="grid gap-4">
+              <div className="grid gap-3">
+                <Label htmlFor="task_name">Tên đề xuất</Label>
+                <Input
+                  id="task_name"
+                  {...register("task_name", {
+                    setValueAs: (value) => value?.trim(),
+                  })}
+                />
+                {errors.task_name && (
+                  <p className="text-sm text-red-500">
+                    {errors.task_name.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="description">Mô tả</Label>
+                <Input
+                  id="description"
+                  {...register("description", {
+                    setValueAs: (value) => value?.trim(),
+                  })}
+                />
+                {errors.description && (
+                  <p className="text-sm text-red-500">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="original_amount">Số tiền</Label>
+                <Controller
+                  control={control}
+                  name="original_amount"
+                  render={({ field }) => (
+                    <Input
+                      id="original_amount"
+                      type="text"
+                      value={
+                        field.value ? field.value.toLocaleString("vi-VN") : ""
+                      }
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\./g, "");
+                        const numValue = parseInt(value) || 0;
+                        field.onChange(numValue);
+                      }}
+                      placeholder="0"
+                    />
+                  )}
+                />
+
+                {errors.original_amount && (
+                  <p className="text-sm text-red-500">
+                    {errors.original_amount.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="building_id">Tòa nhà</Label>
+                <Controller
+                  control={control}
+                  name="building_id"
+                  render={({ field }) => (
+                    <Combobox
+                      items={itemsBd}
+                      onChange={(value) => {
+                        field.onChange([value]);
+                        // Gọi onBuildingChange để fetch apartments
+                        if (onBuildingChange) {
+                          onBuildingChange(value);
+                        }
+                      }}
+                      itemUpdate={""}
+                    />
+                  )}
+                />
+              </div>
+
+              {selectedBuildingId &&
+                selectedBuildingId.length > 0 &&
+                !selectedBuildingId.includes("ALL") && (
+                  <div className="grid gap-3">
+                    <Label htmlFor="apartment_id">Căn hộ</Label>
+                    <Controller
+                      control={control}
+                      name="apartment_id"
+                      render={({ field }) => (
+                        <Combobox
+                          items={itemsApt}
+                          onChange={(value) => {
+                            field.onChange(value);
+                          }}
+                          itemUpdate={""}
+                        />
+                      )}
+                    />
+                  </div>
                 )}
 
-                <form
-                    className="flex flex-col flex-1 relative"
-                    onSubmit={handleSubmit((data) => {
-                        // Gửi ngược data + id lên cha
-                        const allIds = itemsBd
-                            .filter((item) => item.value !== "ALL")
-                            .map((item) => item.value);
+              <div className="grid gap-3">
+                <Label htmlFor="tasktype_id">Loại đề xuất</Label>
+                <Controller
+                  control={control}
+                  name="tasktype_id"
+                  render={({ field }) => (
+                    <Combobox
+                      items={itemsTt}
+                      onChange={(value) => {
+                        field.onChange(value);
+                      }}
+                      itemUpdate={""}
+                    />
+                  )}
+                />
+              </div>
 
-                        if (data.building_id?.includes("ALL")) {
-                            data.building_id = allIds;
-                            // xu ly tao khoan chi toan khu
-                            data.revenue_type = 0;
-                        } else {
-                            // xu ly tao khoan chi noi bo toa
-                            data.revenue_type = 1;
-                        }
+              <div className="grid gap-3">
+                <Label htmlFor="files">Tệp đính kèm</Label>
+                <Input
+                  id="files"
+                  type="file"
+                  multiple
+                  {...register("files")}
+                  className="cursor-pointer"
+                  accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                />
+                {errors.files && (
+                  <p className="text-sm text-red-500">
+                    {errors.files.message as string}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
 
-                        onSubmit(data);
-                    })}
-                >
-                    <SheetHeader>
-                        <SheetTitle>Thêm mới đề xuất khoản thu</SheetTitle>
-                        <SheetDescription>
-                            Nhập thông tin đề xuất khoản thu mới. Nhấn nút lưu để hoàn thành
-                            việc thêm mới.
-                        </SheetDescription>
-                    </SheetHeader>
-
-                    <div className="grid auto-rows-min px-4 h-[70vh] overflow-y-auto">
-                        <div className="grid gap-4">
-                            <div className="grid gap-3">
-                                <Label htmlFor="task_name">Tên đề xuất</Label>
-                                <Input
-                                    id="task_name"
-                                    {...register("task_name", {
-                                        setValueAs: (value) => value?.trim(),
-                                    })}
-                                />
-                                {errors.task_name && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.task_name.message}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="grid gap-3">
-                                <Label htmlFor="description">Mô tả</Label>
-                                <Input
-                                    id="description"
-                                    {...register("description", {
-                                        setValueAs: (value) => value?.trim(),
-                                    })}
-                                />
-                                {errors.description && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.description.message}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="grid gap-3">
-                                <Label htmlFor="original_amount">Số tiền</Label>
-                                <Input
-                                    id="original_amount"
-                                    {...register("original_amount", {valueAsNumber: true})}
-                                    type="number"
-                                    min="1"
-                                    step="0.01"
-                                />
-
-                                {errors.original_amount && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.original_amount.message}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="grid gap-3">
-                                <Label htmlFor="building_id">Tòa nhà</Label>
-                                <Controller
-                                    control={control}
-                                    name="building_id"
-                                    render={({field}) => (
-                                        <Combobox
-                                            items={itemsBd}
-                                            onChange={(value) => {
-                                                field.onChange([value]);
-                                                // Gọi onBuildingChange để fetch apartments
-                                                if (onBuildingChange) {
-                                                    onBuildingChange(value);
-                                                }
-                                            }}
-                                            itemUpdate={""}
-                                        />
-                                    )}
-                                />
-                            </div>
-
-                            {selectedBuildingId &&
-                                selectedBuildingId.length > 0 &&
-                                !selectedBuildingId.includes("ALL") && (
-                                    <div className="grid gap-3">
-                                        <Label htmlFor="apartment_id">Căn hộ</Label>
-                                        <Controller
-                                            control={control}
-                                            name="apartment_id"
-                                            render={({field}) => (
-                                                <Combobox
-                                                    items={itemsApt}
-                                                    onChange={(value) => {
-                                                        field.onChange(value);
-                                                    }}
-                                                    itemUpdate={""}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-                                )}
-
-                            <div className="grid gap-3">
-                                <Label htmlFor="tasktype_id">Loại đề xuất</Label>
-                                <Controller
-                                    control={control}
-                                    name="tasktype_id"
-                                    render={({field}) => (
-                                        <Combobox
-                                            items={itemsTt}
-                                            onChange={(value) => {
-                                                field.onChange(value);
-                                            }}
-                                            itemUpdate={""}
-                                        />
-                                    )}
-                                />
-                            </div>
-
-                            <div className="grid gap-3">
-                                <Label htmlFor="files">Tệp đính kèm</Label>
-                                <Input
-                                    id="files"
-                                    type="file"
-                                    multiple
-                                    {...register("files")}
-                                    className="cursor-pointer"
-                                    accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
-                                />
-                                {errors.files && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.files.message as string}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <SheetFooter className="mt-4 absolute bottom-1 w-full">
-                        <Button type="submit">Lưu thay đổi</Button>
-                        <SheetClose asChild>
-                            <Button type="button" variant="outline" onClick={() => {
-                            }}>
-                                Hủy
-                            </Button>
-                        </SheetClose>
-                    </SheetFooter>
-                </form>
-            </SheetContent>
-        </Sheet>
-    );
+          <SheetFooter className="mt-4 absolute bottom-1 w-full">
+            <Button type="submit">Lưu thay đổi</Button>
+            <SheetClose asChild>
+              <Button type="button" variant="outline" onClick={() => {}}>
+                Hủy
+              </Button>
+            </SheetClose>
+          </SheetFooter>
+        </form>
+      </SheetContent>
+    </Sheet>
+  );
 }

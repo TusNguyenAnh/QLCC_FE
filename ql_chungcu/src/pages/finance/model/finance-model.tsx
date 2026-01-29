@@ -27,7 +27,7 @@ export default function FinanceModel() {
   const [isSystemInitialized, setIsSystemInitialized] = useState(false);
   const [buildings, setBuildings] = useState([]);
 
-  const { complex } = useContext(AuthContext);
+  const { complex,setFinanceModel } = useContext(AuthContext);
 
   // Check if system is already initialized
   useEffect(() => {
@@ -101,8 +101,7 @@ export default function FinanceModel() {
 
       // TODO: Save to backend API
       await createFinanceModelAPI(config);
-      console.log(config);
-
+      setFinanceModel(modelType);
       toast.success("Cấu hình mô hình tài chính thành công!");
       setIsSystemInitialized(true);
       setCurrentStep("dashboard");

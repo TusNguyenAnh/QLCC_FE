@@ -106,7 +106,6 @@ function UserOrgManagement() {
     // // xu ly khi nhan nut sua
     const handleUpdate = async (userId: string) => {
         // nhan tham so la thong tin hang can update
-        console.log(userId);
         setUserId(userId);
         await getRoleByUser(userId);
         setOpenDialog(true);

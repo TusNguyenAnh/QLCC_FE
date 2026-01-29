@@ -5,9 +5,9 @@ export type psModule = {
 
 export type psItem = {
     id: string;
-    name: string;
+    name?: string;
     module?: string,
-    description?: string,
+    description: string,
     total_roles?: number
 }
 

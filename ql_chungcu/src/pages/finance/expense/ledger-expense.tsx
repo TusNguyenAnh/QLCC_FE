@@ -112,7 +112,14 @@ export default function LedgerExpense({
 
         <form
           className="flex flex-col flex-1 relative"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((data) => {
+            // Loại bỏ dấu chấm trong amount trước khi submit
+            const cleanedData = {
+              ...data,
+              amount: data.amount.replace(/\./g, ""),
+            };
+            onSubmit(cleanedData);
+          })}
         >
           <SheetHeader>
             <SheetTitle>Tạo ledger khoản chi</SheetTitle>
@@ -155,10 +162,15 @@ export default function LedgerExpense({
                   <Label htmlFor="amount">Số tiền *</Label>
                   <Input
                     id="amount"
-                    type="number"
+                    type="text"
                     className="w-full"
                     {...register("amount")}
-                    placeholder="VD: 1000000"
+                    placeholder="VD: 1.000.000"
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\./g, "");
+                      const numValue = parseInt(value) || 0;
+                      setValue("amount", numValue.toLocaleString("vi-VN"));
+                    }}
                   />
                   {errors.amount && (
                     <p className="text-sm text-red-500">

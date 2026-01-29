@@ -32,6 +32,7 @@ import RevenueForm, {
   type RevenueFormSchema,
 } from "@/pages/finance/revenue/action-form-revenue.tsx";
 import { createTaskAPI } from "@/apis/taskAPI.ts";
+import FinanceModelWarning from "@/pages/finance/finance-model-warning.tsx";
 
 export default function Revenue() {
   const [revenues, setRevenues] = useState<Revenue[]>([]);
@@ -79,7 +80,7 @@ export default function Revenue() {
   const [selectedBuildingForForm, setSelectedBuildingForForm] =
     useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
-  const { complex } = useContext(AuthContext);
+  const { complex, financeModel } = useContext(AuthContext);
 
   // Fetch revenues function
   const fetchRevenues = async (
@@ -130,7 +131,6 @@ export default function Revenue() {
 
   // Initial load
   useEffect(() => {
-    fetchRevenues(appliedFilters, page, perPage);
     fetchBuildings();
   }, []);
 
@@ -344,6 +344,13 @@ export default function Revenue() {
       setLoading(false);
     }
   };
+
+  // Nếu chưa có finance model, hiển thị thông báo
+  if (!financeModel) {
+    return (
+      <FinanceModelWarning message="Bạn cần thiết lập mô hình tài chính trước khi sử dụng chức năng quản lý thu" />
+    );
+  }
 
   return (
     <div className="max-w-[1400px] mx-auto py-4 px-4">

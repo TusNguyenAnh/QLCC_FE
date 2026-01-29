@@ -132,7 +132,7 @@ export default function AssignPermissionForm({
                                                                 }}
                                                             />
                                                             <span
-                                                                className="flex-1 cursor-pointer">{perm.name}</span>
+                                                                className="flex-1 cursor-pointer">{perm.description}</span>
                                                         </Label>
                                                     )
                                                 }}

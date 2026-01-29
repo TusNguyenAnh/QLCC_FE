@@ -18,14 +18,13 @@ interface RequestListProps {
   requests: Task[] | null;
   onSelectRequest: (request: Task) => void;
   loading?: boolean;
-  type: string;
+  type?: string;
 }
 
 export function RequestList({
   requests,
   onSelectRequest,
   loading,
-  type,
 }: RequestListProps) {
   if (!Array.isArray(requests) || requests.length === 0) {
     return (
@@ -66,7 +65,7 @@ export function RequestList({
                   <div>
                     <div className="font-semibold">{request.fullname}</div>
                     <div className="text-sm text-muted-foreground">
-                      {request.building_name}, Căn {request.apt_number}
+                      {request.building_name}
                     </div>
                   </div>
                 </TableCell>

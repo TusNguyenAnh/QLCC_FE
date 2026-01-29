@@ -65,7 +65,12 @@ export default function ActionFormAdjustment({
   }, [open, form]);
 
   const handleSubmit = (data: AdjustmentFormSchema) => {
-    onSubmit(data);
+    // Loại bỏ dấu chấm trong amount trước khi submit
+    const cleanedData = {
+      ...data,
+      amount: data.amount.replace(/\./g, ""),
+    };
+    onSubmit(cleanedData);
   };
 
   return (
@@ -118,16 +123,24 @@ export default function ActionFormAdjustment({
                   </FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      step="1000"
+                      type="text"
                       placeholder="Nhập số tiền (+ hoặc -)"
-                      {...field}
+                      value={field.value}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\./g, "");
+                        field.onChange(value);
+                      }}
+                      onBlur={(e) => {
+                        const value = e.target.value.replace(/\./g, "");
+                        const numValue = parseInt(value) || 0;
+                        field.onChange(numValue.toLocaleString("vi-VN"));
+                      }}
                       disabled={loading}
                     />
                   </FormControl>
                   <p className="text-xs text-gray-500">
-                    Số dương (+) để tăng, số âm (-) để giảm. VD: -24000 hoặc
-                    50000
+                    Số dương (+) để tăng, số âm (-) để giảm. VD: -24.000 hoặc
+                    50.000
                   </p>
                   <FormMessage />
                 </FormItem>

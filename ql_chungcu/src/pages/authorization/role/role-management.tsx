@@ -72,8 +72,9 @@ export function RoleManagement() {
             const data = await getAllPermissionAPI()
             const transformed: psModule[] = Object.entries(data).map(([key, value]) => ({
                 module_name: key,
-                permission: (value as psItem[]).map(({id, name}) => ({id, name})),
+                permission: (value as psItem[]).map(({id, description}) => ({id, description})),
             }));
+            console.log(transformed);
 
             setPermissions(transformed)
         } catch (err) {
