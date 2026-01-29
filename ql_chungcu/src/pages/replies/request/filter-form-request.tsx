@@ -50,7 +50,7 @@ export type FilterReqFormSchema = z.infer<typeof schema>;
 type ComponentProps = {
     onSubmit?: (orgId: string, filterTask: FilterReqFormSchema) => void;
     onSubmitPdAndRj?: (orgId: string, taskStatus: number, filterTask: FilterReqFormSchema) => void;
-    orgId: string;
+    orgId?: string;
     loading?: boolean;
     type: string;
 };

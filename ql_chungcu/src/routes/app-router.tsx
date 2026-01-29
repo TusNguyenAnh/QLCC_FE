@@ -20,6 +20,7 @@ import PermissionManagement from "@/pages/authorization/permission/permission-ma
 import {RoleManagement} from "@/pages/authorization/role/role-management.tsx";
 import UserManagement from "@/pages/authorization/user/user-management.tsx";
 import FinanceModel from "@/pages/finance/model/finance-model.tsx";
+import {SendRequest} from "@/pages/send-request/send-request.tsx";
 
 const AppRouter: React.FC = () => (
     <Routes>
@@ -128,8 +129,17 @@ const AppRouter: React.FC = () => (
         <Route
             path="/page/reply"
             element={
-                <ProtectedRoute permissions={["view:task"]}>
+                <ProtectedRoute permissions={["review:task"]}>
                     <MainLayout content={<Reply/>}/>
+                </ProtectedRoute>
+            }
+        />
+
+        <Route
+            path="/page/send_request"
+            element={
+                <ProtectedRoute permissions={["view:task"]}>
+                    <MainLayout content={<SendRequest/>}/>
                 </ProtectedRoute>
             }
         />

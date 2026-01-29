@@ -51,7 +51,8 @@ export default function Header() {
         report: 'Báo cáo',
         settings: 'Cài đặt',
         cash: 'Sổ quỹ tiền mặt',
-        model: 'Mô hình tài chính'
+        model: 'Mô hình tài chính',
+        send_request: 'Gửi yêu cầu, phản ánh',
     };
 
     // Hàm tạo mảng breadcrumb từ URL
