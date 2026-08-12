@@ -2,19 +2,60 @@
 import axios from 'axios';
 import {toast} from "sonner";
 
+const version = 'v1';
+
 const request = axios.create({
-    baseURL: 'http://midtob.com:8000/api',
-    // baseURL: 'http://localhost:8000/api',
+    baseURL: 'https://api.bqtsoft.vn/api',
+    // baseURL: 'http://api.mbs.id.vn:5173/api',
+    // baseURL: 'http://localhost:8080/api/'+ version,
+    // baseURL: 'http://api.mbs.id.vn:5173/api/' + version,
+
     headers: {
         Accept: 'application/json',
+
     },
     withCredentials: true, // Đảm bảo gửi cookie với mỗi yêu cầu
 });
 
+request.interceptors.request.use(
+    (config) => {
+        const publicUrls = [
+            "/auth/login",
+            "/auth/register",
+            /^\/complex\/filter\/[^/]+$/
+        ];
+
+        const path = (config.url ?? "").replace(/^\/api\/v1/, "");
+
+        const isPublic = publicUrls.some(url => {
+                if (url instanceof RegExp) {
+                    return url.test(path ?? "");
+                }
+
+                return url === path;
+            }
+        );
+
+        if (!isPublic) {
+            const token = localStorage.getItem("access_token");
+
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+        }
+
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 request.interceptors.response.use(
     (response) => {
         if (response && response.data) {
-            return response.data;
+            return response.data.result
         }
         return response;
     },
@@ -23,6 +64,7 @@ request.interceptors.response.use(
         return Promise.reject(error)
     }
 );
+
 
 // Refresh token tự động nếu access token hết hạn
 // request.interceptors.response.use(

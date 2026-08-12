@@ -29,4 +29,6 @@ jobs:
             docker compose -f docker-compose-qlcc-php.yml build qlcc-frontend
             docker compose -f docker-compose-qlcc-php.yml up -d qlcc-frontend
 
+            docker compose -f docker-compose-qlcc-php.yml restart nginx
+
             docker ps
