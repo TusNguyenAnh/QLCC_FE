@@ -2,7 +2,7 @@
 import axios from 'axios';
 import {toast} from "sonner";
 
-const version = 'v1';
+// const version = 'v1';
 
 const request = axios.create({
     baseURL: 'https://api.bqtsoft.vn/api',
