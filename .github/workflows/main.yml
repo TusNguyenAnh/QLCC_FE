@@ -44,8 +44,8 @@ jobs:
 
             docker stop qlcc_fe || true
             docker rm qlcc_fe || true
-            FRONTEND_TAG=${{ github.sha }} docker compose -f docker-compose.prod.yml pull qlcc-frontend
-            FRONTEND_TAG=${{ github.sha }} docker compose -f docker-compose.prod.yml up -d qlcc-frontend
+            FRONTEND_TAG=${{ github.sha }} docker compose -f docker-compose-qlcc-php.yml pull qlcc-frontend
+            FRONTEND_TAG=${{ github.sha }} docker compose -f docker-compose-qlcc-php.yml up -d qlcc-frontend
             if [ -n "$OLD_IMAGE" ]; then docker image rm "$OLD_IMAGE" || true; fi
             docker ps
 
