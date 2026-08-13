@@ -25,10 +25,10 @@ jobs:
       - name: Build frontend image
         run: |
           cd ql_chungcu 
-          docker build -t ghcr.io/${{ github.repository_owner }}/qlcc-fe:${{ github.sha }} .
+          docker build -t ghcr.io/${{ secrets.REPOSITORY_OWNER }}/qlcc-fe:${{ github.sha }} .
 
       - name: Push frontend image
-        run: docker push ghcr.io/${{ github.repository_owner }}/qlcc-fe:${{ github.sha }}
+        run: docker push ghcr.io/${{ secrets.REPOSITORY_OWNER }}/qlcc-fe:${{ github.sha }}
 
       - name: Deploy frontend to VPS
         uses: appleboy/ssh-action@master
