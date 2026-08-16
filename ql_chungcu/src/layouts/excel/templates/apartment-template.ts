@@ -31,14 +31,21 @@ export const APARTMENT_TEMPLATE: ExcelTemplate = {
             key: "floor",
             label: "Tầng (*)",
             required: true,
-            type: "string",
+            type: "number",
             width: 15,
         },
         {
-            key: "apt_area",
-            label: "Diện tích (*)",
+            key: "gross_area",
+            label: "Diện tích tim tường(*)",
             required: true,
-            type: "string",
+            type: "number",
+            width: 15,
+        },
+        {
+            key: "coefficient",
+            label: "Hệ số quy đổi(*)",
+            required: true,
+            type: "number",
             width: 15,
         },
         {
@@ -61,7 +68,8 @@ export const APARTMENT_TEMPLATE: ExcelTemplate = {
             stt: 1,
             building_name: "Tòa A1",
             apt_number: "1103",
-            apt_area: "53",
+            gross_area: 53,
+            coefficient: 0.2,
             apt_type: "1 phòng ngủ, 1 vệ sinh, 1 phòng khách",
             description: "nhà hướng bac",
             floor: 11
@@ -70,7 +78,8 @@ export const APARTMENT_TEMPLATE: ExcelTemplate = {
             stt: 2,
             building_name: "Tòa A1",
             apt_number: "1106",
-            apt_area: "56",
+            gross_area: 56,
+            coefficient: 0.4,
             apt_type: "1 phòng ngủ, 1 vệ sinh, 1 phòng khách",
             description: "nhà hướng bac",
             floor: 11
@@ -94,11 +103,9 @@ export const APARTMENT_VALIDATION_RULES: ValidationRule[] = [
         maxLength: 100,
     },
     {
-        field: "apt_area",
+        field: "gross_area",
         required: true,
-        type: "string",
-        minLength: 1,
-        maxLength: 100,
+        type: "number",
     },
     {
         field: "apt_type",
@@ -117,9 +124,12 @@ export const APARTMENT_VALIDATION_RULES: ValidationRule[] = [
     {
         field: "floor",
         required: true,
-        type: "string",
-        minLength: 2,
-        maxLength: 100,
+        type: "number",
+    },
+    {
+        field: "coefficient",
+        required: true,
+        type: "number",
     },
 ];
 

@@ -19,7 +19,8 @@ export const columnLabelsTt: Record<string, string> = {
 
 export const columnLabelsApt: Record<string, string> = {
     apt_number: "Số căn hộ",
-    apt_area: "Diện tích",
+    gross_area: "Diện tích tim tường",
+    carpet_area: "Diện tích thông thủy",
     apt_type: "Loại căn hộ",
     description: "Mô tả",
     floor: "Tầng",

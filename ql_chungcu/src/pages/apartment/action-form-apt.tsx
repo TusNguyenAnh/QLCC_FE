@@ -28,7 +28,8 @@ import type { fillItemApt } from "@/types/Apartment.ts";
 // Định nghĩa schema Zod
 const schema = z.object({
   apt_number: z.string().min(1, "Số căn hộ không được để trống"),
-  apt_area: z.number().optional(),
+  gross_area: z.number().optional(),
+  coefficient: z.number().optional(),
   apt_type: z.string().optional(),
   building_id: z.string().optional(),
   description: z.string().optional(),
@@ -66,7 +67,8 @@ export default function AptForm({
     resolver: zodResolver(schema),
     defaultValues: {
       apt_number: formData?.apt_number || "",
-      apt_area: formData?.apt_area || 1, // Giả sử diện tích mặc định là 1
+      gross_area: formData?.gross_area || 1, // Giả sử diện tích mặc định là 1
+      coefficient: formData?.coefficient || 0.1,
       floor: formData?.floor || 1,
       description: formData?.description || "",
       apt_type: formData?.apt_type || "",
@@ -78,7 +80,8 @@ export default function AptForm({
     if (formData) {
       reset({
         apt_number: formData.apt_number || "",
-        apt_area: formData.apt_area || 1,
+        gross_area: formData.gross_area || 1,
+        coefficient: formData?.coefficient || 0.1,
         floor: formData.floor || 1,
         description: formData.description || "",
         apt_type: formData?.apt_type || "",
@@ -152,22 +155,41 @@ export default function AptForm({
 
               {/* Diện tích căn hộ */}
               <div className="grid gap-3">
-                <Label htmlFor="apt_area">
-                  Diện tích (m
+                <Label htmlFor="gross_area">
+                  Diện tích tim tường(m
                   <sup style={{ margin: "0 -6px", fontSize: "10px" }}>2</sup>)
                 </Label>
                 <Input
-                  id="apt_area"
-                  {...register("apt_area", { valueAsNumber: true })}
+                  id="gross_area"
+                  {...register("gross_area", { valueAsNumber: true })}
                   type="number"
                   min="10"
                   max="1000"
                   step="0.01"
                 />
-                {errors.apt_area && (
+                {errors.gross_area && (
                   <p className="text-sm text-red-500">
-                    {errors.apt_area.message}
+                    {errors.gross_area.message}
                   </p>
+                )}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="coefficient">
+                  Hệ số quy đổi
+                </Label>
+                <Input
+                    id="coefficient"
+                    {...register("coefficient", {valueAsNumber: true})}
+                    type="number"
+                    min="0,1"
+                    max="100"
+                    step="0.01"
+                />
+                {errors.coefficient && (
+                    <p className="text-sm text-red-500">
+                      {errors.coefficient.message}
+                    </p>
                 )}
               </div>
 

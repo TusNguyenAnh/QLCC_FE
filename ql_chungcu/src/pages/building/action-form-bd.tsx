@@ -22,7 +22,6 @@ import type {fillItemBd} from "@/types/Building.ts";
 // Định nghĩa schema Zod
 const schema = z.object({
     building_name: z.string().min(1, "Tên tòa nhà không được để trống"),
-    address: z.string().optional(),
     complex_id: z.string().optional(),
 })
 
@@ -47,7 +46,6 @@ export default function BdForm({open, setOpen, loading, action, formData, onSubm
         resolver: zodResolver(schema),
         defaultValues: {
             building_name: formData?.building_name || "",
-            address: formData?.address || "",
         },
     })
 
@@ -55,7 +53,6 @@ export default function BdForm({open, setOpen, loading, action, formData, onSubm
         if (formData) {
             reset({
                 building_name: formData?.building_name || "",
-                address: formData?.address || "",
                 complex_id: formData?.complex_id || "",
             })
         }
@@ -95,12 +92,6 @@ export default function BdForm({open, setOpen, loading, action, formData, onSubm
                                 {errors.building_name &&
                                     <p className="text-sm text-red-500">{errors.building_name.message}</p>}
 
-                            </div>
-
-                            <div className="grid gap-3">
-                                <Label htmlFor="address">Địa chỉ</Label>
-                                <Input id="address" {...register("address", {
-                                    setValueAs: (value) => value?.trim()})} />
                             </div>
                         </div>
                     </div>

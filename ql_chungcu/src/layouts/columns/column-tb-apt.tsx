@@ -73,12 +73,22 @@ export const ColumnsApt = ({handleUpdate, handleDelete}: ComponentProps): Column
     },
 
     {
-        accessorKey: 'apt_area',
+        accessorKey: 'gross_area',
         header: ({column}) => (
-            <DataTableColumnHeader column={column} title="Diện tích"/>
+            <DataTableColumnHeader column={column} title="Diện tích tim tường"/>
         ),
         cell: ({row}) => (
-            <div>{row.getValue('apt_area')}</div>
+            <div>{row.getValue('gross_area')}</div>
+        ),
+    },
+
+    {
+        accessorKey: 'carpet_area',
+        header: ({column}) => (
+            <DataTableColumnHeader column={column} title="Diện tích thông thủy"/>
+        ),
+        cell: ({row}) => (
+            <div>{row.getValue('carpet_area')}</div>
         ),
     },
 
